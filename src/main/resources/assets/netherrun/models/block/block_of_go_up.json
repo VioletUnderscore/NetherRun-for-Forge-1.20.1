@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "down": "minecraft:block/netherite_block",
+    "east": "netherrun:block/block_of_go_up_sides",
+    "north": "netherrun:block/block_of_go_up_sides",
+    "particle": "netherrun:block/block_of_go_up_sides",
+    "south": "netherrun:block/block_of_go_up_sides",
+    "up": "netherrun:block/block_of_go_up_top",
+    "west": "netherrun:block/block_of_go_up_sides"
+  }
+}
