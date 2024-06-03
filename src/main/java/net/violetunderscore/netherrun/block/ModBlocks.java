@@ -20,7 +20,9 @@ public class ModBlocks {
             DeferredRegister.create(ForgeRegistries.BLOCKS, NetherRun.MODID);
 
     public static final RegistryObject<Block> BLOCK_OF_GO_UP = registerBlock("block_of_go_up",
-        () -> new Block(BlockBehaviour.Properties.copy(Blocks.NETHERITE_BLOCK)));
+            () -> new Block(BlockBehaviour.Properties.copy(Blocks.NETHERITE_BLOCK)));
+    public static final RegistryObject<Block> BLOCK_OF_GO_DOWN = registerBlock("block_of_go_down",
+            () -> new Block(BlockBehaviour.Properties.copy(Blocks.NETHERITE_BLOCK)));
 
     private static <T extends  Block> RegistryObject<T> registerBlock(String name, Supplier<T> block) {
         RegistryObject<T> toReturn = BLOCKS.register(name, block);

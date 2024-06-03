@@ -21,6 +21,9 @@ public class ModCreativeModeTabs {
                     .title(Component.translatable("creativetab.netherrun_tab"))
                     .displayItems((pParameters, pOutput) -> {
                         pOutput.accept(ModBlocks.BLOCK_OF_GO_UP.get());
+                        pOutput.accept(ModBlocks.BLOCK_OF_GO_DOWN.get());
+
+                        pOutput.accept(ModItems.NETHERRUN_PICKAXE.get());
                     })
                     .build());
 

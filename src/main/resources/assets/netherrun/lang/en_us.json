@@ -2,6 +2,7 @@
   "item.netherrun.netherrun_pickaxe": "NetherRun Pickaxe",
 
   "block.netherrun.block_of_go_up": "Block of Go Up",
+  "block.netherrun.block_of_go_down": "Block of Go Down",
 
   "creativetab.netherrun_tab": "Nether Run"
 }
