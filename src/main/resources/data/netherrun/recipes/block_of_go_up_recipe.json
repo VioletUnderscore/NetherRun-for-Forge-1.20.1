@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "n": {
+      "item": "minecraft:netherite_ingot"
+    },
+    "s": {
+      "item": "minecraft:shulker_shell"
+    },
+    "c": {
+      "item": "minecraft:crying_obsidian"
+    }
+  },
+  "pattern": [
+    "ncn",
+    "csc",
+    "nnn"
+  ],
+  "result": {
+    "item": "netherrun:block_of_go_up"
+  },
+  "show_notification": true
+}
