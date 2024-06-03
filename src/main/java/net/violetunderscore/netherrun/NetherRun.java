@@ -16,6 +16,7 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.violetunderscore.netherrun.block.ModBlocks;
 import net.violetunderscore.netherrun.item.ModCreativeModeTabs;
 import net.violetunderscore.netherrun.item.ModItems;
+import net.violetunderscore.netherrun.particle.ModParticles;
 import org.slf4j.Logger;
 
 // The value here should match an entry in the META-INF/mods.toml file
@@ -34,6 +35,8 @@ public class NetherRun
 
         ModItems.register(modEventBus);
         ModBlocks.register(modEventBus);
+
+        ModParticles.register(modEventBus);
 
         // Register the commonSetup method for modloading
         modEventBus.addListener(this::commonSetup);

@@ -11,6 +11,7 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import net.violetunderscore.netherrun.NetherRun;
+import net.violetunderscore.netherrun.block.custom.GoUpBlock;
 import net.violetunderscore.netherrun.item.ModItems;
 
 import java.util.function.Supplier;
@@ -21,6 +22,9 @@ public class ModBlocks {
 
     public static final RegistryObject<Block> BLOCK_OF_GO_UP = registerBlock("block_of_go_up",
             () -> new Block(BlockBehaviour.Properties.copy(Blocks.NETHERITE_BLOCK)));
+    public static final RegistryObject<Block> GO_UP = registerBlock("go_up",
+            () -> new GoUpBlock(BlockBehaviour.Properties.copy(Blocks.NETHERITE_BLOCK).noCollission()));
+
     public static final RegistryObject<Block> BLOCK_OF_GO_DOWN = registerBlock("block_of_go_down",
             () -> new Block(BlockBehaviour.Properties.copy(Blocks.NETHERITE_BLOCK)));
 

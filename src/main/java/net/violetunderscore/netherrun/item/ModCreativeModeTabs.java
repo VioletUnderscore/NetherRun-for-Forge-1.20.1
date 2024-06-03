@@ -3,9 +3,7 @@ package net.violetunderscore.netherrun.item;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
@@ -17,7 +15,7 @@ public class ModCreativeModeTabs {
             DeferredRegister.create(Registries.CREATIVE_MODE_TAB, NetherRun.MODID);
 
     public static final RegistryObject<CreativeModeTab> NETHERRUN_TAB = CREATIVE_MODE_TABS.register("netherrun_tab",
-            () -> CreativeModeTab.builder().icon(() -> new ItemStack(Items.NETHERITE_PICKAXE))
+            () -> CreativeModeTab.builder().icon(() -> new ItemStack(ModItems.NETHERRUN_PICKAXE.get()))
                     .title(Component.translatable("creativetab.netherrun_tab"))
                     .displayItems((pParameters, pOutput) -> {
                         pOutput.accept(ModBlocks.BLOCK_OF_GO_UP.get());
