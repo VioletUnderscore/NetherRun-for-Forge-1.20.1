@@ -14,7 +14,9 @@ public class ModItems {
             DeferredRegister.create(ForgeRegistries.ITEMS, NetherRun.MODID);
 
     public static final RegistryObject<Item> NETHERRUN_PICKAXE = ITEMS.register("netherrun_pickaxe",
-            () -> new PickaxeItem(Tiers.NETHERITE, -4, -2.8f, new Item.Properties()));
+            () -> new PickaxeItem(Tiers.NETHERITE, -4, -2.8f, new Item.Properties().fireResistant()));
+    public static final RegistryObject<Item> NETHERRUN_TOTEM = ITEMS.register("netherrun_totem",
+            () -> new Item(new Item.Properties().fireResistant()));
 
     public static void register(IEventBus eventBus) {
         ITEMS.register(eventBus);
