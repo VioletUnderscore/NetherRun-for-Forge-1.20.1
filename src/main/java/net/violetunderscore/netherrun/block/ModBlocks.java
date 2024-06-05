@@ -5,6 +5,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.material.PushReaction;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -20,14 +21,14 @@ public class ModBlocks {
             DeferredRegister.create(ForgeRegistries.BLOCKS, NetherRun.MODID);
 
     public static final RegistryObject<Block> BLOCK_OF_GO_UP = registerBlock("block_of_go_up",
-            () -> new Block(BlockBehaviour.Properties.copy(Blocks.NETHERITE_BLOCK)));
+            () -> new Block(BlockBehaviour.Properties.copy(Blocks.NETHERITE_BLOCK).pushReaction(PushReaction.BLOCK)));
     public static final RegistryObject<Block> GO_UP = registerBlock("go_up",
-            () -> new GoUpBlock(BlockBehaviour.Properties.copy(Blocks.NETHERITE_BLOCK).noCollission()));
+            () -> new GoUpBlock(BlockBehaviour.Properties.copy(Blocks.AIR)));
 
     public static final RegistryObject<Block> BLOCK_OF_GO_DOWN = registerBlock("block_of_go_down",
-            () -> new Block(BlockBehaviour.Properties.copy(Blocks.NETHERITE_BLOCK)));
+            () -> new Block(BlockBehaviour.Properties.copy(Blocks.NETHERITE_BLOCK).pushReaction(PushReaction.BLOCK)));
 
-    private static <T extends  Block> RegistryObject<T> registerBlock(String name, Supplier<T> block) {
+    private static <T extends Block> RegistryObject<T> registerBlock(String name, Supplier<T> block) {
         RegistryObject<T> toReturn = BLOCKS.register(name, block);
         registerBlockItem(name, toReturn);
         return toReturn;

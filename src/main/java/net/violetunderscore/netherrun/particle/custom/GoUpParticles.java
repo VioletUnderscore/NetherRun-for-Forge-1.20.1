@@ -23,6 +23,13 @@ public class GoUpParticles extends TextureSheetParticle {
         this.rCol = 1f;
         this.gCol = 1f;
         this.bCol = 1f;
+
+        this.hasPhysics = false;
+
+        randomlifetime = new Random();
+        this.x += (float) (randomlifetime.nextInt(60) - 30) / 100;
+        randomlifetime = new Random();
+        this.z += (float) (randomlifetime.nextInt(60) - 30) / 100;
     }
 
     @Override
@@ -31,8 +38,10 @@ public class GoUpParticles extends TextureSheetParticle {
         fadeOut();
     }
 
-    private void fadeOut() {
+    private void fadeOut()
+    {
         this.alpha = (-(1/(float)lifetime) * age + 1);
+        this.y += 0.2;
     }
 
     @Override
