@@ -13,7 +13,7 @@ public class ModParticles {
             DeferredRegister.create(ForgeRegistries.PARTICLE_TYPES, NetherRun.MODID);
 
     public static final RegistryObject<SimpleParticleType> GO_UP_PARTICLES =
-            PARTICLE_TYPES.register("go_up_particles.json", () -> new SimpleParticleType(true));
+            PARTICLE_TYPES.register("go_up_particles", () -> new SimpleParticleType(true));
 
     public static void register(IEventBus eventBus) {
         PARTICLE_TYPES.register(eventBus);

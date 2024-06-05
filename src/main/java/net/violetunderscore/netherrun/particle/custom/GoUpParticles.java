@@ -6,16 +6,18 @@ import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.api.distmarker.Dist;
 
+import java.util.Random;
+
 public class GoUpParticles extends TextureSheetParticle {
     protected GoUpParticles(ClientLevel pLevel, double pX, double pY, double pZ, SpriteSet spriteSet, double pXSpeed, double pYSpeed, double pZSpeed) {
         super(pLevel, pX, pY, pZ, pXSpeed, pYSpeed, pZSpeed);
-//remember that when making this, spriteSet wasn't here before
         this.friction = 0.8F;
         this.xd = pXSpeed;
         this.yd = pYSpeed;
         this.zd = pZSpeed;
         this.quadSize *= 0.85F;
-        this.lifetime = 20;
+        Random randomlifetime = new Random();
+        this.lifetime = randomlifetime.nextInt(40) + 10;
         this.setSpriteFromAge(spriteSet);
 
         this.rCol = 1f;
