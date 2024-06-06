@@ -14,6 +14,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.violetunderscore.netherrun.block.ModBlocks;
+import net.violetunderscore.netherrun.block.entity.ModBlockEntities;
 import net.violetunderscore.netherrun.item.ModCreativeModeTabs;
 import net.violetunderscore.netherrun.item.ModItems;
 import net.violetunderscore.netherrun.particle.ModParticles;
@@ -35,6 +36,8 @@ public class NetherRun
 
         ModItems.register(modEventBus);
         ModBlocks.register(modEventBus);
+
+        ModBlockEntities.register(modEventBus);
 
         ModParticles.register(modEventBus);
 

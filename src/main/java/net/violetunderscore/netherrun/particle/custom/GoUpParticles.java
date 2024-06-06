@@ -2,9 +2,11 @@ package net.violetunderscore.netherrun.particle.custom;
 
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.*;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.api.distmarker.Dist;
+import net.violetunderscore.netherrun.block.ModBlocks;
 
 import java.util.Random;
 
@@ -24,24 +26,27 @@ public class GoUpParticles extends TextureSheetParticle {
         this.gCol = 1f;
         this.bCol = 1f;
 
-        this.hasPhysics = false;
-
-        randomlifetime = new Random();
-        this.x += (float) (randomlifetime.nextInt(60) - 30) / 100;
-        randomlifetime = new Random();
-        this.z += (float) (randomlifetime.nextInt(60) - 30) / 100;
+        this.gravity = -2;
     }
 
     @Override
     public void tick() {
         super.tick();
         fadeOut();
+        if (!this.level.getBlockState(BlockPos.containing(this.x, this.y, this.z)).is(ModBlocks.GO_UP.get())) {
+            this.gravity = 2;
+        }
+        else {
+            this.gravity = -2;
+            if (this.level.getBlockState(BlockPos.containing(this.x, this.y + 1, this.z)).is(ModBlocks.GO_UP.get())) {
+                this.age = 1;
+            }
+        }
     }
 
     private void fadeOut()
     {
         this.alpha = (-(1/(float)lifetime) * age + 1);
-        this.y += 0.2;
     }
 
     @Override
