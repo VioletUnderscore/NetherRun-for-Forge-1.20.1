@@ -42,10 +42,6 @@ public class BlockOfGoUp extends BaseEntityBlock {
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level pLevel, BlockState pState, BlockEntityType<T> pBlockEntityType) {
-        if(!pLevel.isClientSide()) {
-            return null;
-        }
-
         return createTickerHelper(pBlockEntityType, ModBlockEntities.BLOCK_OF_GO_UP_BE.get(),
                 (pLevel1, pPos, pState1, pBlockEntity) -> pBlockEntity.tick(pLevel1, pPos, pState1));
     }

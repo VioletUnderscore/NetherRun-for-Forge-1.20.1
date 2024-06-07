@@ -17,6 +17,10 @@ public class ModBlockEntities {
             BLOCK_ENTITIES.register("block_of_go_up_be", () ->
                     BlockEntityType.Builder.of(BlockOfGoUpBlockEntity::new,
                             ModBlocks.BLOCK_OF_GO_UP.get()).build(null));
+    public static final RegistryObject<BlockEntityType<GoUpBlockEntity>> GO_UP_BE =
+            BLOCK_ENTITIES.register("go_up_be", () ->
+                    BlockEntityType.Builder.of(GoUpBlockEntity::new,
+                            ModBlocks.GO_UP.get()).build(null));
 
     public static void register(IEventBus eventBus) {
         BLOCK_ENTITIES.register(eventBus);
