@@ -46,7 +46,7 @@ public class NetherrunPickaxeItem extends PickaxeItem {
 
     @Override
     public InteractionResultHolder<ItemStack> use(Level pLevel, Player pPlayer, InteractionHand pUsedHand) {
-        if (!pLevel.isClientSide() && pPlayer.getMainHandItem().getTag().getLong("netherrun.enchant_timeout") <= pLevel.getGameTime()
+        if (!pLevel.isClientSide() && pPlayer.getMainHandItem().getTag().getLong("netherrun.enchant_ready_timeout") <= pLevel.getGameTime()
                 && pPlayer.getMainHandItem().getItem().toString().equals(ModItems.NETHERRUN_PICKAXE.get().toString()))
         {
             pPlayer.getMainHandItem().getTag().putBoolean("netherrun.enchant_ready", false);
