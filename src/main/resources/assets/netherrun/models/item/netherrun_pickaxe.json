@@ -1,6 +1,9 @@
 {
   "parent": "item/handheld",
   "textures": {
-    "layer0": "netherrun:item/netherrun_pickaxe"
-  }
+    "layer0": "netherrun:item/netherrun_pickaxe_ready"
+  },
+  "overrides": [
+    { "predicate": { "custom_model_data": 1}, "model": "netherrun:item/netherrun_pickaxe_not_ready" }
+  ]
 }

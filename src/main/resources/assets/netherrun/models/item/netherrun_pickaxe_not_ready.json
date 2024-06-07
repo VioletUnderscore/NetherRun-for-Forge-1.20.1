@@ -1,0 +1,6 @@
+{
+  "parent": "item/handheld",
+  "textures": {
+    "layer0": "netherrun:item/netherrun_pickaxe_not_ready"
+  }
+}

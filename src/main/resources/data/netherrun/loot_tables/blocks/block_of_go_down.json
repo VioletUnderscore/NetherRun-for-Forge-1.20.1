@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "condition": [
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "netherrun:block_of_go_down"
+        }
+      ],
+      "rolls": 1.0
+    }
+  ],
+  "random_sequence": "netherrun:blocks/block_of_go_down"
+}

@@ -6,7 +6,7 @@
       "item": "minecraft:netherite_ingot"
     },
     "s": {
-      "item": "minecraft:shulker_shell"
+      "item": "minecraft:stick"
     },
     "c": {
       "item": "minecraft:crying_obsidian"
@@ -14,8 +14,8 @@
   },
   "pattern": [
     "ncn",
-    "csc",
-    "ccc"
+    " s ",
+    " s "
   ],
   "result": {
     "item": "netherrun:block_of_go_up"

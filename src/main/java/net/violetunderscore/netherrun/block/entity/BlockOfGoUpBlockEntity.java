@@ -8,11 +8,9 @@ import net.violetunderscore.netherrun.block.ModBlocks;
 import net.violetunderscore.netherrun.particle.ModParticles;
 
 import java.util.Random;
-import java.util.logging.Logger;
 
 public class BlockOfGoUpBlockEntity extends BlockEntity {
 
-    private static final Logger LOGGER = Logger.getLogger(BlockOfGoUpBlockEntity.class.getName());
 
 
     public BlockOfGoUpBlockEntity(BlockPos pPos, BlockState pBlockState) {
