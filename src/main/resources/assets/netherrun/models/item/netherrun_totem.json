@@ -1,6 +1,9 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "netherrun:item/netherrun_totem"
-  }
+    "layer0": "netherrun:item/netherrun_totem_ready"
+  },
+  "overrides": [
+    { "predicate": { "custom_model_data": 1}, "model": "netherrun:item/netherrun_totem_not_ready" }
+  ]
 }
