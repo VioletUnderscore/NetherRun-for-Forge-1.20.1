@@ -1,6 +1,5 @@
 package net.violetunderscore.netherrun;
 
-import com.mojang.logging.LogUtils;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
@@ -17,17 +16,18 @@ import net.violetunderscore.netherrun.block.ModBlocks;
 import net.violetunderscore.netherrun.block.entity.ModBlockEntities;
 import net.violetunderscore.netherrun.item.ModCreativeModeTabs;
 import net.violetunderscore.netherrun.item.ModItems;
+import net.violetunderscore.netherrun.network.NetworkHandler;
 import net.violetunderscore.netherrun.particle.ModParticles;
-import org.slf4j.Logger;
+
 
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod(NetherRun.MODID)
 public class NetherRun
 {
+    //My Variables
     // Define mod id in a common place for everything to reference
     public static final String MODID = "netherrun";
     // Directly reference a slf4j logger
-    private static final Logger LOGGER = LogUtils.getLogger();
     public NetherRun()
     {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
@@ -57,7 +57,7 @@ public class NetherRun
 
     private void commonSetup(final FMLCommonSetupEvent event)
     {
-
+        NetworkHandler.register();
     }
 
     // Add the example block item to the building blocks tab
