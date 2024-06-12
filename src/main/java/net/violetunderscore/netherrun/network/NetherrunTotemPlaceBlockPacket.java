@@ -6,7 +6,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.loading.FMLEnvironment;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
@@ -34,13 +35,16 @@ public class NetherrunTotemPlaceBlockPacket {
     public static void handle(NetherrunTotemPlaceBlockPacket packet, Supplier<NetworkEvent.Context> contextSupplier) {
         NetworkEvent.Context context = contextSupplier.get();
         context.enqueueWork(() -> {
-            if (FMLEnvironment.dist == Dist.CLIENT) {
-                Level level = net.minecraft.client.Minecraft.getInstance().level;
-                if (level != null) {
-                    level.setBlock(packet.pos, packet.blockState, 3);
-                }
-            }
+            DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> handleClient(packet));
         });
         context.setPacketHandled(true);
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    private static void handleClient(NetherrunTotemPlaceBlockPacket packet) {
+        Level level = net.minecraft.client.Minecraft.getInstance().level;
+        if (level != null) {
+            level.setBlock(packet.pos, packet.blockState, 3);
+        }
     }
 }

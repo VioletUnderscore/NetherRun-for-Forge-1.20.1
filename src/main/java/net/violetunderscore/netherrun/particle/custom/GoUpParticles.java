@@ -10,6 +10,7 @@ import net.violetunderscore.netherrun.block.ModBlocks;
 
 import java.util.Random;
 
+
 public class GoUpParticles extends TextureSheetParticle {
     protected GoUpParticles(ClientLevel pLevel, double pX, double pY, double pZ, SpriteSet spriteSet, double pXSpeed, double pYSpeed, double pZSpeed) {
         super(pLevel, pX, pY, pZ, pXSpeed, pYSpeed, pZSpeed);
