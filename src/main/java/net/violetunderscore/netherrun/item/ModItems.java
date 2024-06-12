@@ -17,7 +17,7 @@ public class ModItems {
     public static final RegistryObject<Item> NETHERRUN_PICKAXE = ITEMS.register("netherrun_pickaxe",
             () -> new NetherrunPickaxeItem(Tiers.NETHERITE, -4, -2.8f, new Item.Properties().fireResistant().durability(69420)));
     public static final RegistryObject<Item> NETHERRUN_TOTEM = ITEMS.register("netherrun_totem",
-            () -> new NetherrunTotemItem(new Item.Properties().fireResistant()));
+            () -> new NetherrunTotemItem(new Item.Properties().fireResistant().stacksTo(1)));
 
     public static void register(IEventBus eventBus) {
         ITEMS.register(eventBus);

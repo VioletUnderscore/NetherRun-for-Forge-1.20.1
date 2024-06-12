@@ -4,6 +4,7 @@ import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.violetunderscore.netherrun.NetherRun;
+import net.violetunderscore.netherrun.block.ModBlocks;
 import net.violetunderscore.netherrun.item.ModItems;
 
 ;

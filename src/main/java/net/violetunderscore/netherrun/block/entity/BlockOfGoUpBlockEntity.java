@@ -10,34 +10,30 @@ import net.violetunderscore.netherrun.particle.ModParticles;
 
 import java.util.Random;
 
+import static net.violetunderscore.netherrun.block.custom.GoUpBlock.UP_STRENGTH;
+
 public class BlockOfGoUpBlockEntity extends BlockEntity {
-
-
 
     public BlockOfGoUpBlockEntity(BlockPos pPos, BlockState pBlockState) {
         super(ModBlockEntities.BLOCK_OF_GO_UP_BE.get(), pPos, pBlockState);
     }
 
     public void tick(Level pLevel, BlockPos pPos, BlockState pState) {
-        //CLIENT
-        if(pLevel.isClientSide()) {
-            if (pLevel.getBlockState(BlockPos.containing(pPos.getX(), pPos.getY() + 1, pPos.getZ())).is(ModBlocks.GO_UP.get())) {
-                Random randomPosX = new Random();
-                Random randomPosZ = new Random();
-                pLevel.addParticle(ModParticles.GO_UP_PARTICLES.get(),
-                        pPos.getX() + ((float) (randomPosX.nextInt(60) + 20) / 100), pPos.getY() + 1, pPos.getZ() + ((float) (randomPosZ.nextInt(60) + 20) / 100),
-                        0, 0, 0);
+        if (!pLevel.isClientSide()) {
+            BlockPos abovePos = pPos.above();
+            int initialStrength = 30;
+
+            if (pLevel.getBlockState(abovePos).isAir()) {
+                pLevel.setBlock(abovePos, ModBlocks.GO_UP.get().defaultBlockState().setValue(UP_STRENGTH, initialStrength), 3);
             }
         }
-        //SERVER
-        else if(!pLevel.isClientSide()) {
 
-        }
-        //BOTH
-        if (pLevel.getBlockState(BlockPos.containing(pPos.getX(), pPos.getY() + 1, pPos.getZ())).is(Blocks.AIR)
-                || pLevel.getBlockState(BlockPos.containing(pPos.getX(), pPos.getY() + 1, pPos.getZ())).is(Blocks.VOID_AIR)
-                || pLevel.getBlockState(BlockPos.containing(pPos.getX(), pPos.getY() + 1, pPos.getZ())).is(Blocks.CAVE_AIR)) {
-            pLevel.setBlock(BlockPos.containing(pPos.getX(), pPos.getY() + 1, pPos.getZ()), ModBlocks.GO_UP.get().defaultBlockState(), 0);
+        if (pLevel.isClientSide() && pLevel.getBlockState(pPos.above()).is(ModBlocks.GO_UP.get())) {
+            Random randomPosX = new Random();
+            Random randomPosZ = new Random();
+            pLevel.addParticle(ModParticles.GO_UP_PARTICLES.get(),
+                    pPos.getX() + ((float) (randomPosX.nextInt(60) + 20) / 100), pPos.getY() + 1, pPos.getZ() + ((float) (randomPosZ.nextInt(60) + 20) / 100),
+                    0, 0, 0);
         }
     }
 }
