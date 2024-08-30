@@ -20,7 +20,8 @@ public class ModCreativeModeTabs {
                     .displayItems((pParameters, pOutput) -> {
                         pOutput.accept(ModBlocks.BLOCK_OF_GO_UP.get());
                         pOutput.accept(ModBlocks.GO_UP.get());
-                        pOutput.accept(ModBlocks.BLOCK_OF_GO_DOWN.get());
+                        //pOutput.accept(ModBlocks.BLOCK_OF_GO_DOWN.get());
+                        pOutput.accept(ModBlocks.SOUL_SLIME_BLOCK.get());
 
                         pOutput.accept(ModItems.NETHERRUN_PICKAXE.get());
                         pOutput.accept(ModItems.NETHERRUN_TOTEM.get());

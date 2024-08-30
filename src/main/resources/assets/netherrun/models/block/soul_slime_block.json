@@ -1,0 +1,8 @@
+{
+  "render_type": "minecraft:translucent",
+  "parent": "minecraft:block/slime_block",
+  "textures": {
+    "particle": "netherrun:block/soul_slime_block",
+    "texture": "netherrun:block/soul_slime_block"
+  }
+}

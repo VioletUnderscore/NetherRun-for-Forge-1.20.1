@@ -14,6 +14,8 @@ public class ModParticles {
 
     public static final RegistryObject<SimpleParticleType> GO_UP_PARTICLES =
             PARTICLE_TYPES.register("go_up_particles", () -> new SimpleParticleType(true));
+    public static final RegistryObject<SimpleParticleType> GO_UP_PLACED_PARTICLES =
+            PARTICLE_TYPES.register("go_up_placed_particles", () -> new SimpleParticleType(true));
 
     public static void register(IEventBus eventBus) {
         PARTICLE_TYPES.register(eventBus);

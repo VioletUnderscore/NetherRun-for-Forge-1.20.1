@@ -4,8 +4,8 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.*;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.SimpleParticleType;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.violetunderscore.netherrun.block.ModBlocks;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -13,9 +13,10 @@ import org.apache.logging.log4j.Logger;
 import java.util.Random;
 
 
-public class GoUpParticles extends TextureSheetParticle {
+public class GoUpPlacedParticles extends TextureSheetParticle {
     private static final Logger LOGGER = LogManager.getLogger();
-    protected GoUpParticles(ClientLevel pLevel, double pX, double pY, double pZ, SpriteSet spriteSet, double pXSpeed, double pYSpeed, double pZSpeed) {
+    protected GoUpPlacedParticles(ClientLevel pLevel, double pX, double pY, double pZ, SpriteSet spriteSet, double pXSpeed, double pYSpeed, double pZSpeed) {
+
         super(pLevel, pX, pY, pZ, pXSpeed, pYSpeed, pZSpeed);
         this.friction = 0.8F;
         this.xd = pXSpeed;
@@ -23,14 +24,14 @@ public class GoUpParticles extends TextureSheetParticle {
         this.zd = pZSpeed;
         this.quadSize *= 0.85F;
         Random randomlifetime = new Random();
-        this.lifetime = randomlifetime.nextInt(40) + 10;
+        this.lifetime = randomlifetime.nextInt(15) + 5;
         this.setSpriteFromAge(spriteSet);
 
         this.rCol = 1f;
         this.gCol = 1f;
         this.bCol = 1f;
 
-        this.gravity = -2;
+        this.gravity = -1;
 
         //LOGGER.info("Particle is summoned!");
     }
@@ -41,17 +42,9 @@ public class GoUpParticles extends TextureSheetParticle {
         fadeOut();
         if (!this.level.getBlockState(BlockPos.containing(this.x, this.y, this.z)).is(ModBlocks.GO_UP.get())) {
             this.gravity = 2;
-            if (!this.level.getBlockState(BlockPos.containing(this.x, this.y - 1, this.z)).is(ModBlocks.GO_UP.get())) {
-            this.rCol = 0f;
-            this.gCol = 0f;
-            this.bCol = 0f;
-            }
         }
         else {
-            this.gravity = -2;
-            this.rCol = 1f;
-            this.gCol = 1f;
-            this.bCol = 1f;
+            this.gravity = -1;
             if (this.level.getBlockState(BlockPos.containing(this.x, this.y + 1, this.z)).is(ModBlocks.GO_UP.get())) {
                 this.age = 1;
             }
@@ -83,7 +76,7 @@ public class GoUpParticles extends TextureSheetParticle {
         public Particle createParticle(SimpleParticleType particleType, ClientLevel level,
                                        double x, double y, double z,
                                        double dx, double dy, double dz) {
-            return new GoUpParticles(level, x, y, z, this.sprites, dx, dy, dz);
+            return new GoUpPlacedParticles(level, x, y, z, this.sprites, dx, dy, dz);
         }
     }
 }

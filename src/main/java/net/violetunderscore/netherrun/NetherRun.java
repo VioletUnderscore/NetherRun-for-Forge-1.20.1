@@ -15,10 +15,13 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.violetunderscore.netherrun.block.ModBlocks;
 import net.violetunderscore.netherrun.block.entity.ModBlockEntities;
+import net.violetunderscore.netherrun.commands.NetherRunStart;
 import net.violetunderscore.netherrun.item.ModCreativeModeTabs;
 import net.violetunderscore.netherrun.item.ModItems;
 import net.violetunderscore.netherrun.network.NetworkHandler;
 import net.violetunderscore.netherrun.particle.ModParticles;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 
 // The value here should match an entry in the META-INF/mods.toml file
@@ -29,6 +32,7 @@ public class NetherRun
     // Define mod id in a common place for everything to reference
     public static final String MODID = "netherrun";
     // Directly reference a slf4j logger
+    private static final Logger LOGGER = LogManager.getLogger();
     public NetherRun()
     {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
@@ -47,6 +51,7 @@ public class NetherRun
 
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
+
 
 
         // Register the item to a creative tab
@@ -74,6 +79,7 @@ public class NetherRun
     }
     @SubscribeEvent
     public void onRegisterCommands(RegisterCommandsEvent event) {
+        NetherRunStart.register(event.getDispatcher());
     }
 
 

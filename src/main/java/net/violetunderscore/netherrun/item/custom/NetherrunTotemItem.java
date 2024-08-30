@@ -75,17 +75,16 @@ public class NetherrunTotemItem extends Item {
         return super.use(pLevel, pPlayer, pUsedHand);
     }
     public void inventoryTick(ItemStack pStack, Level pLevel, Entity pEntity, int pSlotId, boolean pIsSelected) {
-        pStack.getOrCreateTag();
 
-        if (pStack.getTag().getLong("netherrun.totem_ready_timeout") <= pLevel.getGameTime()) {
-            pStack.getTag().putBoolean("netherrun.totem_ready", true);
-            pStack.getTag().putInt("CustomModelData", 0);
+        if (pStack.getOrCreateTag().getLong("netherrun.ready_timeout") <= pLevel.getGameTime()) {
+            pStack.getOrCreateTag().putBoolean("netherrun.ready", true);
+            pStack.getOrCreateTag().putInt("CustomModelData", 0);
         }
-        if (pIsSelected == true) {
+        if (pIsSelected) {
             if (!pLevel.isClientSide()) {
                 if (pLevel instanceof ServerLevel serverLevel) {
                     if (pEntity.isInLava()) {
-                        if (pStack.getTag().getBoolean("netherrun.totem_ready")) {
+                        if (pStack.getOrCreateTag().getBoolean("netherrun.ready")) {
                             pEntity.extinguishFire();
                             for (int yValue = 1; yValue <= 10; yValue += 1) {
                                 BlockState state = pLevel.getBlockState(BlockPos.containing(
@@ -121,9 +120,9 @@ public class NetherrunTotemItem extends Item {
                                 pBlockToPlace = Blocks.AIR.defaultBlockState();
                             }
                             {
-                                pStack.getTag().putBoolean("netherrun.totem_ready", false);
-                                pStack.getTag().putInt("CustomModelData", 1);
-                                pStack.getTag().putLong("netherrun.totem_ready_timeout", pLevel.getGameTime() + 300);
+                                pStack.getOrCreateTag().putBoolean("netherrun.ready", false);
+                                pStack.getOrCreateTag().putInt("CustomModelData", 1);
+                                pStack.getOrCreateTag().putLong("netherrun.ready_timeout", pLevel.getGameTime() + 300);
                             }
                         }
                     }

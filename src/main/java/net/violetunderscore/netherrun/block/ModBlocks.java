@@ -13,6 +13,7 @@ import net.minecraftforge.registries.RegistryObject;
 import net.violetunderscore.netherrun.NetherRun;
 import net.violetunderscore.netherrun.block.custom.BlockOfGoUp;
 import net.violetunderscore.netherrun.block.custom.GoUpBlock;
+import net.violetunderscore.netherrun.block.custom.SoulSlimeBlock;
 import net.violetunderscore.netherrun.item.ModItems;
 
 import java.util.function.Supplier;
@@ -28,6 +29,9 @@ public class ModBlocks {
 
     public static final RegistryObject<Block> BLOCK_OF_GO_DOWN = registerBlock("block_of_go_down",
             () -> new Block(BlockBehaviour.Properties.copy(Blocks.NETHERITE_BLOCK).pushReaction(PushReaction.BLOCK)));
+
+    public static final RegistryObject<Block> SOUL_SLIME_BLOCK = registerBlock("soul_slime_block",
+            () -> new SoulSlimeBlock(BlockBehaviour.Properties.copy(Blocks.SLIME_BLOCK).speedFactor(0.4f)));
 
     private static <T extends Block> RegistryObject<T> registerBlock(String name, Supplier<T> block) {
         RegistryObject<T> toReturn = BLOCKS.register(name, block);

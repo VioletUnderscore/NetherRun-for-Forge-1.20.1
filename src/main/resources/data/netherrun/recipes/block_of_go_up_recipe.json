@@ -3,10 +3,10 @@
   "category": "misc",
   "key": {
     "n": {
-      "item": "minecraft:netherite_ingot"
+      "item": "minecraft:netherite_scrap"
     },
-    "s": {
-      "item": "minecraft:shulker_shell"
+    "g": {
+      "item": "netherrun:go_up"
     },
     "c": {
       "item": "minecraft:crying_obsidian"
@@ -14,8 +14,8 @@
   },
   "pattern": [
     "ncn",
-    "csc",
-    "ccc"
+    "ggg",
+    "cgc"
   ],
   "result": {
     "item": "netherrun:block_of_go_up"
