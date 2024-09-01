@@ -10,6 +10,7 @@ import net.violetunderscore.netherrun.particle.ModParticles;
 
 import java.util.Random;
 
+import static net.violetunderscore.netherrun.block.custom.GoUpBlock.PLAYER_PLACED;
 import static net.violetunderscore.netherrun.block.custom.GoUpBlock.UP_STRENGTH;
 
 public class BlockOfGoUpBlockEntity extends BlockEntity {
@@ -24,7 +25,7 @@ public class BlockOfGoUpBlockEntity extends BlockEntity {
             int initialStrength = 30;
 
             if (pLevel.getBlockState(abovePos).isAir()) {
-                pLevel.setBlock(abovePos, ModBlocks.GO_UP.get().defaultBlockState().setValue(UP_STRENGTH, initialStrength), 3);
+                pLevel.setBlock(abovePos, ModBlocks.GO_UP.get().defaultBlockState().setValue(UP_STRENGTH, initialStrength).setValue(PLAYER_PLACED, false), 3);
             }
         }
 

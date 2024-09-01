@@ -13,6 +13,7 @@ import net.violetunderscore.netherrun.block.custom.GoUpBlock;
 
 import javax.annotation.Nonnull;
 
+import static net.violetunderscore.netherrun.block.custom.GoUpBlock.PLAYER_PLACED;
 import static net.violetunderscore.netherrun.block.custom.GoUpBlock.UP_STRENGTH;
 
 public class GoUpBlockEntity extends BlockEntity {
@@ -56,9 +57,9 @@ public class GoUpBlockEntity extends BlockEntity {
 
         if (currentStrength > 1) {
             if (pLevel.getBlockState(abovePos).isAir()) {
-                pLevel.setBlock(abovePos, ModBlocks.GO_UP.get().defaultBlockState().setValue(UP_STRENGTH, currentStrength - 1), 3);
+                pLevel.setBlock(abovePos, ModBlocks.GO_UP.get().defaultBlockState().setValue(UP_STRENGTH, currentStrength - 1).setValue(PLAYER_PLACED, false), 3);
             } else if (pLevel.getBlockState(abovePos).is(ModBlocks.GO_UP.get()) && pLevel.getBlockState(abovePos).getValue(UP_STRENGTH) != currentStrength - 1) {
-                pLevel.setBlock(abovePos, ModBlocks.GO_UP.get().defaultBlockState().setValue(UP_STRENGTH, currentStrength - 1), 3);
+                pLevel.setBlock(abovePos, ModBlocks.GO_UP.get().defaultBlockState().setValue(UP_STRENGTH, currentStrength - 1).setValue(PLAYER_PLACED, false), 3);
             }
         }
     }

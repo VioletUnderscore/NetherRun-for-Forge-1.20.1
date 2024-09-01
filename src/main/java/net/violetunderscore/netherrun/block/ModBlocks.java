@@ -31,7 +31,7 @@ public class ModBlocks {
             () -> new Block(BlockBehaviour.Properties.copy(Blocks.NETHERITE_BLOCK).pushReaction(PushReaction.BLOCK)));
 
     public static final RegistryObject<Block> SOUL_SLIME_BLOCK = registerBlock("soul_slime_block",
-            () -> new SoulSlimeBlock(BlockBehaviour.Properties.copy(Blocks.SLIME_BLOCK).speedFactor(0.4f)));
+            () -> new SoulSlimeBlock(BlockBehaviour.Properties.copy(Blocks.SLIME_BLOCK).speedFactor(0.8f)));
 
     private static <T extends Block> RegistryObject<T> registerBlock(String name, Supplier<T> block) {
         RegistryObject<T> toReturn = BLOCKS.register(name, block);

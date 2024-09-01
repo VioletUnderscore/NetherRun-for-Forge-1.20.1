@@ -1,5 +1,8 @@
 package net.violetunderscore.netherrun.event;
 
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -8,12 +11,15 @@ import net.violetunderscore.netherrun.NetherRun;
 import net.violetunderscore.netherrun.block.ModBlocks;
 import net.violetunderscore.netherrun.item.ModItems;
 import net.violetunderscore.netherrun.network.GoUpParticlePacket;
+import net.violetunderscore.netherrun.network.ItemCooldownPacket;
 import net.violetunderscore.netherrun.network.NetworkHandler;
 import net.violetunderscore.netherrun.particle.ModParticles;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 ;import java.util.Random;
+
+import static net.violetunderscore.netherrun.block.custom.GoUpBlock.PLAYER_PLACED;
 
 @Mod.EventBusSubscriber(modid = NetherRun.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class ForgeEventBusEvents {
@@ -40,8 +46,14 @@ public class ForgeEventBusEvents {
 
     @SubscribeEvent
     public static void onEntityPlace(BlockEvent.EntityPlaceEvent event) {
+        if (event.getEntity() instanceof  Player) {
+            Player pPlayer = (Player) event.getEntity();
             //LOGGER.info("NETHERRUN: onEntityPlace is being called");
             if (event.getPlacedBlock().is(ModBlocks.GO_UP.get())) {
+                event.getPlacedBlock().setValue(PLAYER_PLACED, true);
+                if (!pPlayer.isCreative()) {
+                    pPlayer.getCooldowns().addCooldown(ModBlocks.GO_UP.get().asItem(), 15);
+                }
                 //LOGGER.info("NETHERRUN: If statement is working");
                 for (int i = 0; i < 15; i++) {
                     //LOGGER.info("NETHERRUN: For loop is working");
@@ -56,14 +68,10 @@ public class ForgeEventBusEvents {
                             ModParticles.GO_UP_PLACED_PARTICLES.get()
 
                     ), event.getLevel().getServer(), 32);
-
-                    /*event.getEntity().level().addParticle(ModParticles.GO_UP_PLACED_PARTICLES.get(),
-                            event.getPos().getX() + ((float) (randomPosX.nextInt(60) + 20) / 100),
-                            event.getPos().getY() + ((float) (randomPosY.nextInt(60) + 20) / 100),
-                            event.getPos().getZ() + ((float) (randomPosZ.nextInt(60) + 20) / 100),
-                            0, 1, 0);*/
                 }
+            } else if (event.getPlacedBlock().is(ModBlocks.BLOCK_OF_GO_UP.get()) && !pPlayer.isCreative()) {
+                pPlayer.getCooldowns().addCooldown(ModBlocks.BLOCK_OF_GO_UP.get().asItem(), 300);
             }
-
+        }
     }
 }

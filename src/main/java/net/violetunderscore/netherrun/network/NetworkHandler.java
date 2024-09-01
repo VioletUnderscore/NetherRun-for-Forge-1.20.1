@@ -23,6 +23,7 @@ public class NetworkHandler {
         int id = 0;
         INSTANCE.registerMessage(id++, NetherrunTotemPlaceBlockPacket.class, NetherrunTotemPlaceBlockPacket::encode, NetherrunTotemPlaceBlockPacket::decode, NetherrunTotemPlaceBlockPacket::handle);
         INSTANCE.registerMessage(id++, GoUpParticlePacket.class, GoUpParticlePacket::encode, GoUpParticlePacket::decode, GoUpParticlePacket::handle);
+        INSTANCE.registerMessage(id++, ItemCooldownPacket.class, ItemCooldownPacket::encode, ItemCooldownPacket::decode, ItemCooldownPacket::handle);
     }
 
     public static void sendToAllPlayers(NetherrunTotemPlaceBlockPacket packet, MinecraftServer server) {
@@ -37,5 +38,9 @@ public class NetworkHandler {
             INSTANCE.send(PacketDistributor.NEAR.with(PacketDistributor.TargetPoint.p(player.getX(), player.getY(), player.getZ(), rad, player.level().dimension())), packet);
             //INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), packet);
         }
+    }
+
+    public static void sendToServer(ItemCooldownPacket packet) {
+        INSTANCE.sendToServer(packet);
     }
 }

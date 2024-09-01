@@ -48,7 +48,7 @@ public class GoUpParticles extends TextureSheetParticle {
             }
         }
         else {
-            this.gravity = -2;
+            this.gravity = -3f;
             this.rCol = 1f;
             this.gCol = 1f;
             this.bCol = 1f;
