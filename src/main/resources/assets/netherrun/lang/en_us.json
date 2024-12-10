@@ -6,6 +6,7 @@
   "block.netherrun.go_up": "Go Up",
   "block.netherrun.block_of_go_down": "Block of Go Down",
   "block.netherrun.soul_slime_block": "Soul Slime Block",
+  "block.netherrun.squished_soul_slime_block": "Squished Soul Slime Block",
 
   "creativetab.netherrun_tab": "Nether Run"
 }

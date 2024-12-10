@@ -32,4 +32,8 @@ public class SquishedSoulSlimeBlock extends SoulSlimeBlock {
     public VoxelShape getCollisionShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
         return SOUL_SLIME_SHAPE;
     }
+    @Override
+    public VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
+        return SOUL_SLIME_SHAPE;
+    }
 }
