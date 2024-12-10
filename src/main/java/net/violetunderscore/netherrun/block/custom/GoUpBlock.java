@@ -37,6 +37,7 @@ import java.util.Random;
 public class GoUpBlock extends BaseEntityBlock {
     private static final Logger LOGGER = LogManager.getLogger();
     public static final IntegerProperty UP_STRENGTH = IntegerProperty.create("up_strength", 0, 64);
+    public static final IntegerProperty LIFETIME = IntegerProperty.create("lifetime", 0, 64);
     public static final BooleanProperty PLAYER_PLACED = BooleanProperty.create("player_placed");
 
     public GoUpBlock(Properties pProperties) {
@@ -48,6 +49,7 @@ public class GoUpBlock extends BaseEntityBlock {
         super.createBlockStateDefinition(builder);
         builder.add(UP_STRENGTH);
         builder.add(PLAYER_PLACED);
+        builder.add(LIFETIME);
     }
 
     @Override

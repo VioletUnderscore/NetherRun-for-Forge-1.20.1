@@ -14,6 +14,7 @@ import net.violetunderscore.netherrun.NetherRun;
 import net.violetunderscore.netherrun.block.custom.BlockOfGoUp;
 import net.violetunderscore.netherrun.block.custom.GoUpBlock;
 import net.violetunderscore.netherrun.block.custom.SoulSlimeBlock;
+import net.violetunderscore.netherrun.block.custom.SquishedSoulSlimeBlock;
 import net.violetunderscore.netherrun.item.ModItems;
 
 import java.util.function.Supplier;
@@ -32,6 +33,9 @@ public class ModBlocks {
 
     public static final RegistryObject<Block> SOUL_SLIME_BLOCK = registerBlock("soul_slime_block",
             () -> new SoulSlimeBlock(BlockBehaviour.Properties.copy(Blocks.SLIME_BLOCK).speedFactor(0.8f)));
+
+    public static final RegistryObject<Block> SQUISHED_SOUL_SLIME_BLOCK = registerBlock("squished_soul_slime_block",
+            () -> new SquishedSoulSlimeBlock(BlockBehaviour.Properties.copy(Blocks.SLIME_BLOCK).speedFactor(0.8f)));
 
     private static <T extends Block> RegistryObject<T> registerBlock(String name, Supplier<T> block) {
         RegistryObject<T> toReturn = BLOCKS.register(name, block);

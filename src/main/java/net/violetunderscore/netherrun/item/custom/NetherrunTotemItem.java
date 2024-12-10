@@ -41,47 +41,50 @@ public class NetherrunTotemItem extends Item {
             if (!pLevel.isClientSide()) {
                 if (pLevel instanceof ServerLevel serverLevel) {
                     if (pEntity.isInLava()) {
-                        if (pStack.getOrCreateTag().getBoolean("netherrun.ready")) {
-                            pEntity.extinguishFire();
-                            for (int yValue = 1; yValue <= 10; yValue += 1) {
-                                BlockState state = pLevel.getBlockState(BlockPos.containing(
-                                        pEntity.position().x(),
-                                        pEntity.position().y() + yValue,
-                                        pEntity.position().z()));
-                                if (!state.is(Blocks.LAVA)) {
-                                    pEntity.teleportTo(
-                                            Math.floor(pEntity.position().x()) + 0.5,
-                                            Math.floor(pEntity.position().y()) + yValue,
-                                            Math.floor(pEntity.position().z()) + 0.5
-                                    );
-                                    yValue = 11;
-                                }
-                            }
-                            pEntity.fallDistance = 0;
-                            BlockState pBlockToPlace = Blocks.CRYING_OBSIDIAN.defaultBlockState();
-                            for (int yValue = -1; yValue <= 3; yValue += 1) {
-                                if (yValue == 3) {
-                                    pBlockToPlace = Blocks.CRYING_OBSIDIAN.defaultBlockState();
-                                }
-                                for (int xValue = -1; xValue <= 1; xValue += 1) {
-                                    for (int zValue = -1; zValue <= 1; zValue += 1) {
-                                        BlockPos pos = BlockPos.containing(
-                                                pEntity.position().x() + xValue,
-                                                pEntity.position().y() + yValue,
-                                                pEntity.position().z() + zValue
+                        if (!(pEntity instanceof Player _player && (_player.isSpectator() || _player.isCreative()))) {
+                            if (pStack.getOrCreateTag().getBoolean("netherrun.ready")) {
+                                pEntity.extinguishFire();
+                                for (int yValue = 1; yValue <= 10; yValue += 1) {
+                                    BlockState state = pLevel.getBlockState(BlockPos.containing(
+                                            pEntity.position().x(),
+                                            pEntity.position().y() + yValue,
+                                            pEntity.position().z()));
+                                    if (!state.is(Blocks.LAVA)) {
+                                        pEntity.teleportTo(
+                                                Math.floor(pEntity.position().x()) + 0.5,
+                                                Math.floor(pEntity.position().y()) + yValue,
+                                                Math.floor(pEntity.position().z()) + 0.5
                                         );
-                                        pLevel.setBlock(pos, pBlockToPlace, 3);
-                                        NetworkHandler.sendToAllPlayers(new NetherrunTotemPlaceBlockPacket(pos, pBlockToPlace), serverLevel.getServer());
+                                        yValue = 11;
                                     }
                                 }
-                                pBlockToPlace = Blocks.AIR.defaultBlockState();
-                            }
-                            {
-                                pStack.getOrCreateTag().putBoolean("netherrun.ready", false);
-                                pStack.getOrCreateTag().putInt("CustomModelData", 1);
-                                pStack.getOrCreateTag().putLong("netherrun.ready_timeout", pLevel.getGameTime() + 300);
+                                pEntity.fallDistance = 0;
+                                BlockState pBlockToPlace = Blocks.CRYING_OBSIDIAN.defaultBlockState();
+                                for (int yValue = -1; yValue <= 3; yValue += 1) {
+                                    if (yValue == 3) {
+                                        pBlockToPlace = Blocks.CRYING_OBSIDIAN.defaultBlockState();
+                                    }
+                                    for (int xValue = -1; xValue <= 1; xValue += 1) {
+                                        for (int zValue = -1; zValue <= 1; zValue += 1) {
+                                            BlockPos pos = BlockPos.containing(
+                                                    pEntity.position().x() + xValue,
+                                                    pEntity.position().y() + yValue,
+                                                    pEntity.position().z() + zValue
+                                            );
+                                            pLevel.setBlock(pos, pBlockToPlace, 3);
+                                            NetworkHandler.sendToAllPlayers(new NetherrunTotemPlaceBlockPacket(pos, pBlockToPlace), serverLevel.getServer());
+                                        }
+                                    }
+                                    pBlockToPlace = Blocks.AIR.defaultBlockState();
+                                }
+                                {
+                                    pStack.getOrCreateTag().putBoolean("netherrun.ready", false);
+                                    pStack.getOrCreateTag().putInt("CustomModelData", 1);
+                                    pStack.getOrCreateTag().putLong("netherrun.ready_timeout", pLevel.getGameTime() + 300);
+                                }
                             }
                         }
+
                     }
                 }
             }

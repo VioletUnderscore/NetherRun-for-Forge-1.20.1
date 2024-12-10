@@ -1,9 +1,15 @@
 package net.violetunderscore.netherrun.event;
 
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -19,12 +25,26 @@ import org.apache.logging.log4j.Logger;
 
 ;import java.util.Random;
 
-import static net.violetunderscore.netherrun.block.custom.GoUpBlock.PLAYER_PLACED;
+import static net.violetunderscore.netherrun.block.custom.GoUpBlock.*;
+
+
 
 @Mod.EventBusSubscriber(modid = NetherRun.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class ForgeEventBusEvents {
 
     private static final Logger LOGGER = LogManager.getLogger();
+
+//    private static LazyOptional<INetherRunData> getGlobalData(Level level) {
+//        if (level.getServer() != null) {
+//            ServerLevel overworld = level.getServer().getLevel(Level.OVERWORLD);
+//            if (overworld != null) {
+//                return overworld.getCapability(NetherRunCapabilityProvider.NETHER_RUN_CAPABILITY);
+//            }
+//        }
+//        return LazyOptional.empty();
+//    }
+
+
     @SubscribeEvent
     public static void onLivingAttack(LivingAttackEvent event) {
         //LOGGER.info("onLivingAttack has been called with MsgID: '" + event.getSource().getMsgId() + "'");
@@ -51,6 +71,7 @@ public class ForgeEventBusEvents {
             //LOGGER.info("NETHERRUN: onEntityPlace is being called");
             if (event.getPlacedBlock().is(ModBlocks.GO_UP.get())) {
                 event.getPlacedBlock().setValue(PLAYER_PLACED, true);
+                event.getPlacedBlock().setValue(LIFETIME, 12);
                 if (!pPlayer.isCreative()) {
                     pPlayer.getCooldowns().addCooldown(ModBlocks.GO_UP.get().asItem(), 15);
                 }
@@ -73,5 +94,9 @@ public class ForgeEventBusEvents {
                 pPlayer.getCooldowns().addCooldown(ModBlocks.BLOCK_OF_GO_UP.get().asItem(), 300);
             }
         }
+    }
+
+    @SubscribeEvent
+    public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
     }
 }
