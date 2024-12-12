@@ -24,6 +24,7 @@ public class NetworkHandler {
         INSTANCE.registerMessage(id++, NetherrunTotemPlaceBlockPacket.class, NetherrunTotemPlaceBlockPacket::encode, NetherrunTotemPlaceBlockPacket::decode, NetherrunTotemPlaceBlockPacket::handle);
         INSTANCE.registerMessage(id++, GoUpParticlePacket.class, GoUpParticlePacket::encode, GoUpParticlePacket::decode, GoUpParticlePacket::handle);
         INSTANCE.registerMessage(id++, ItemCooldownPacket.class, ItemCooldownPacket::encode, ItemCooldownPacket::decode, ItemCooldownPacket::handle);
+        INSTANCE.registerMessage(id++, SyncNetherRunScoresPacket.class, SyncNetherRunScoresPacket::encode, SyncNetherRunScoresPacket::new, SyncNetherRunScoresPacket::handle);
     }
 
     public static void sendToAllPlayers(NetherrunTotemPlaceBlockPacket packet, MinecraftServer server) {

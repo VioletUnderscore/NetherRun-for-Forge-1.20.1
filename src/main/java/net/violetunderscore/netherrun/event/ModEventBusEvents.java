@@ -1,6 +1,7 @@
 package net.violetunderscore.netherrun.event;
 
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -12,9 +13,12 @@ import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.network.PacketDistributor;
 import net.violetunderscore.netherrun.NetherRun;
-import net.violetunderscore.netherrun.variables.global.scores.NetherRunScores;
-import net.violetunderscore.netherrun.variables.global.scores.NetherRunScoresProvider;
+import net.violetunderscore.netherrun.network.NetworkHandler;
+import net.violetunderscore.netherrun.network.SyncNetherRunScoresPacket;
+import net.violetunderscore.netherrun.variables.global.scores.NetherRunScoresData;
+import net.violetunderscore.netherrun.variables.global.scores.NetherRunScoresDataManager;
 import net.violetunderscore.netherrun.variables.player.kits.PlayerKits;
 import net.violetunderscore.netherrun.variables.player.kits.PlayerKitsProvider;
 import org.apache.logging.log4j.LogManager;
@@ -29,7 +33,7 @@ public class ModEventBusEvents {
     @SubscribeEvent
     public static void onRegisterCapabilities(RegisterCapabilitiesEvent event) {
         event.register(PlayerKits.class);
-        event.register(NetherRunScores.class);
+//        event.register(NetherRunScores.class);
     }
 
 
@@ -64,15 +68,15 @@ public class ModEventBusEvents {
 
 
     //NETHERRUN CAPABILITY
-    @SubscribeEvent
-    public static void onAttachCapabilitiesWorld(AttachCapabilitiesEvent<Level> event) {
-        if (event.getObject().dimension() == Level.OVERWORLD) {
-            if (!event.getObject().getCapability(NetherRunScoresProvider.NETHERRUN_SCORES).isPresent()) {
-                LOGGER.info("Attaching NetherRunScores capability to Overworld");
-                event.addCapability(new ResourceLocation(NetherRun.MODID, "scores"), new NetherRunScoresProvider());
-            }
-        }
-    }
+//    @SubscribeEvent
+//    public static void onAttachCapabilitiesWorld(AttachCapabilitiesEvent<Level> event) {
+//        if (event.getObject().dimension() == Level.OVERWORLD) {
+//            if (!event.getObject().getCapability(NetherRunScoresProvider.NETHERRUN_SCORES).isPresent()) {
+//                LOGGER.info("Attaching NetherRunScores capability to Overworld");
+//                event.addCapability(new ResourceLocation(NetherRun.MODID, "scores"), new NetherRunScoresProvider());
+//            }
+//        }
+//    }
 
 
 
@@ -81,6 +85,8 @@ public class ModEventBusEvents {
     // MISCELLANEOUS
     @SubscribeEvent
     public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
+
+
         event.player.clearFire();
         if(event.side == LogicalSide.SERVER) {
             event.player.getCapability(PlayerKitsProvider.PLAYER_KITS).ifPresent(kit -> {
@@ -95,9 +101,18 @@ public class ModEventBusEvents {
 
     @SubscribeEvent
     public static void onWorldTick(TickEvent.LevelTickEvent event) {
-        if (event.level.dimension() == Level.OVERWORLD) {
-            event.level.getCapability(NetherRunScoresProvider.NETHERRUN_SCORES).ifPresent(scores -> {
-                scores.addScore(0, 1);
+        if (event.level.dimension() == Level.OVERWORLD && !event.level.isClientSide()) {
+            ServerLevel serverLevel = (ServerLevel) event.level;
+            serverLevel.getServer().execute(() -> {
+                NetherRunScoresData scoresData = NetherRunScoresDataManager.get(serverLevel);
+                scoresData.setTargetScore(scoresData.getTargetScore() + 1);
+
+                // Broadcast scores to all players
+                NetworkHandler.INSTANCE.send(PacketDistributor.ALL.noArg(),
+                        new SyncNetherRunScoresPacket(
+                                scoresData.getTeam1Score(),
+                                scoresData.getTeam2Score(),
+                                scoresData.getTargetScore()));
             });
         }
     }
