@@ -1,12 +1,16 @@
 {
   "item.netherrun.netherrun_pickaxe": "NetherRun Pickaxe",
   "item.netherrun.netherrun_totem": "NetherRun Totem",
+  "item.netherrun.netherrun_boat": "Boat",
+  "item.netherrun.netherrun_chest_boat": "Chest Boat",
 
   "block.netherrun.block_of_go_up": "Block of Go Up",
   "block.netherrun.go_up": "Go Up",
   "block.netherrun.block_of_go_down": "Block of Go Down",
   "block.netherrun.soul_slime_block": "Soul Slime Block",
   "block.netherrun.squished_soul_slime_block": "Squished Soul Slime Block",
+
+  "entity.netherrun.netherrun_chest_boat": "Boat with Chest",
 
   "creativetab.netherrun_tab": "Nether Run"
 }

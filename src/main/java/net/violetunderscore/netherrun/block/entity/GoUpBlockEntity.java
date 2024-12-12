@@ -49,7 +49,7 @@ public class GoUpBlockEntity extends BlockEntity {
         //SERVER
         else if (!pLevel.isClientSide()) {
             // Server-side behavior
-            LOGGER.info("L: " + pState.getValue(LIFETIME) + ", S: " + pState.getValue(UP_STRENGTH) + ", P: " +  pState.getValue(PLAYER_PLACED));
+            //LOGGER.info("L: " + pState.getValue(LIFETIME) + ", S: " + pState.getValue(UP_STRENGTH) + ", P: " +  pState.getValue(PLAYER_PLACED));
 
             if (pState.getValue(PLAYER_PLACED)) {
 

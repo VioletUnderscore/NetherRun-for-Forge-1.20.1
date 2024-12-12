@@ -95,8 +95,4 @@ public class ForgeEventBusEvents {
             }
         }
     }
-
-    @SubscribeEvent
-    public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
-    }
 }

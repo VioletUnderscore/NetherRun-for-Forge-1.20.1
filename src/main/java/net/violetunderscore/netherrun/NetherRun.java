@@ -1,5 +1,6 @@
 package net.violetunderscore.netherrun;
 
+import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.CapabilityManager;
@@ -18,6 +19,8 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.violetunderscore.netherrun.block.ModBlocks;
 import net.violetunderscore.netherrun.block.entity.ModBlockEntities;
 import net.violetunderscore.netherrun.commands.NetherRunStart;
+import net.violetunderscore.netherrun.entity.ModEntities;
+import net.violetunderscore.netherrun.entity.client.NetherRunBoatRenderer;
 import net.violetunderscore.netherrun.item.ModCreativeModeTabs;
 import net.violetunderscore.netherrun.item.ModItems;
 import net.violetunderscore.netherrun.network.NetworkHandler;
@@ -43,6 +46,8 @@ public class NetherRun
 
         ModItems.register(modEventBus);
         ModBlocks.register(modEventBus);
+
+        ModEntities.register(modEventBus);
 
         ModBlockEntities.register(modEventBus);
 
@@ -92,7 +97,8 @@ public class NetherRun
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event)
         {
-
+            EntityRenderers.register(ModEntities.NETHERRUN_BOAT.get(), pContext -> new NetherRunBoatRenderer(pContext, false));
+            EntityRenderers.register(ModEntities.NETHERRUN_CHEST_BOAT.get(), pContext -> new NetherRunBoatRenderer(pContext, true));
         }
     }
 }

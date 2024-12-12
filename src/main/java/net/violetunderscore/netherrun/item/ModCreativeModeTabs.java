@@ -26,6 +26,8 @@ public class ModCreativeModeTabs {
 
                         pOutput.accept(ModItems.NETHERRUN_PICKAXE.get());
                         pOutput.accept(ModItems.NETHERRUN_TOTEM.get());
+                        pOutput.accept(ModItems.NETHERRUN_BOAT.get());
+                        pOutput.accept(ModItems.NETHERRUN_CHEST_BOAT.get());
                     })
                     .build());
 

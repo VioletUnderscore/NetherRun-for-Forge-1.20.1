@@ -18,7 +18,10 @@ public class NetherRunStart {
 
     private static int execute(CommandContext<CommandSourceStack> context) {
         String message = StringArgumentType.getString(context, "message");
-        context.getSource().sendSuccess(() -> Component.literal("You said:" + message), false);
+        context.getSource().sendSuccess(() -> Component.literal("You said: " + message), false);
+        if (message.equals("game")) {
+
+        }
         return 1;
     }
 }
