@@ -1,11 +1,14 @@
 package net.violetunderscore.netherrun.event;
 
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.screens.PauseScreen;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.client.event.ScreenEvent;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
@@ -15,6 +18,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.violetunderscore.netherrun.NetherRun;
 import net.violetunderscore.netherrun.block.ModBlocks;
+import net.violetunderscore.netherrun.client.NetherRunVersionDisplay;
 import net.violetunderscore.netherrun.item.ModItems;
 import net.violetunderscore.netherrun.network.GoUpParticlePacket;
 import net.violetunderscore.netherrun.network.ItemCooldownPacket;

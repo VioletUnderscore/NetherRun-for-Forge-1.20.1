@@ -12,27 +12,27 @@ import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
-public class NetherrunTotemPlaceBlockPacket {
+public class NetherrunPlaceBlockPacket {
     private final BlockPos pos;
     private final BlockState blockState;
 
-    public NetherrunTotemPlaceBlockPacket(BlockPos pos, BlockState blockState) {
+    public NetherrunPlaceBlockPacket(BlockPos pos, BlockState blockState) {
         this.pos = pos;
         this.blockState = blockState;
     }
 
-    public static void encode(NetherrunTotemPlaceBlockPacket packet, FriendlyByteBuf buffer) {
+    public static void encode(NetherrunPlaceBlockPacket packet, FriendlyByteBuf buffer) {
         buffer.writeBlockPos(packet.pos);
         buffer.writeVarInt(Block.getId(packet.blockState));
     }
 
-    public static NetherrunTotemPlaceBlockPacket decode(FriendlyByteBuf buffer) {
+    public static NetherrunPlaceBlockPacket decode(FriendlyByteBuf buffer) {
         BlockPos pos = buffer.readBlockPos();
         BlockState blockState = Block.stateById(buffer.readVarInt());
-        return new NetherrunTotemPlaceBlockPacket(pos, blockState);
+        return new NetherrunPlaceBlockPacket(pos, blockState);
     }
 
-    public static void handle(NetherrunTotemPlaceBlockPacket packet, Supplier<NetworkEvent.Context> contextSupplier) {
+    public static void handle(NetherrunPlaceBlockPacket packet, Supplier<NetworkEvent.Context> contextSupplier) {
         NetworkEvent.Context context = contextSupplier.get();
         context.enqueueWork(() -> {
             DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> handleClient(packet));
@@ -41,7 +41,7 @@ public class NetherrunTotemPlaceBlockPacket {
     }
 
     @OnlyIn(Dist.CLIENT)
-    private static void handleClient(NetherrunTotemPlaceBlockPacket packet) {
+    private static void handleClient(NetherrunPlaceBlockPacket packet) {
         Level level = net.minecraft.client.Minecraft.getInstance().level;
         if (level != null) {
             level.setBlock(packet.pos, packet.blockState, 3);

@@ -1,5 +1,6 @@
 package net.violetunderscore.netherrun.block.entity;
 
+import com.google.common.graph.Network;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;
@@ -8,8 +9,11 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.minecraftforge.network.PacketDistributor;
 import net.violetunderscore.netherrun.block.ModBlocks;
 import net.violetunderscore.netherrun.block.custom.GoUpBlock;
+import net.violetunderscore.netherrun.network.NetherrunPlaceBlockPacket;
+import net.violetunderscore.netherrun.network.NetworkHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -49,7 +53,7 @@ public class GoUpBlockEntity extends BlockEntity {
         //SERVER
         else if (!pLevel.isClientSide()) {
             // Server-side behavior
-            //LOGGER.info("L: " + pState.getValue(LIFETIME) + ", S: " + pState.getValue(UP_STRENGTH) + ", P: " +  pState.getValue(PLAYER_PLACED));
+            LOGGER.info("L: " + pState.getValue(LIFETIME) + ", S: " + pState.getValue(UP_STRENGTH) + ", P: " +  pState.getValue(PLAYER_PLACED));
 
             if (pState.getValue(PLAYER_PLACED)) {
 
@@ -70,6 +74,8 @@ public class GoUpBlockEntity extends BlockEntity {
                         || (pLevel.getBlockState(below1).is(ModBlocks.GO_UP.get())
                         && pLevel.getBlockState(below1).getValue(UP_STRENGTH) <= 1)) {
                     pLevel.setBlock(pPos, Blocks.AIR.defaultBlockState(), 0);
+                    NetworkHandler.INSTANCE.send(PacketDistributor.ALL.noArg(),
+                            new NetherrunPlaceBlockPacket(pPos, Blocks.AIR.defaultBlockState()));
                 }
                 int currentStrength = pState.getValue(UP_STRENGTH);
 

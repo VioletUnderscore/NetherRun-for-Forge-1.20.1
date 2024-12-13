@@ -21,13 +21,13 @@ public class NetworkHandler {
 
     public static void register() {
         int id = 0;
-        INSTANCE.registerMessage(id++, NetherrunTotemPlaceBlockPacket.class, NetherrunTotemPlaceBlockPacket::encode, NetherrunTotemPlaceBlockPacket::decode, NetherrunTotemPlaceBlockPacket::handle);
+        INSTANCE.registerMessage(id++, NetherrunPlaceBlockPacket.class, NetherrunPlaceBlockPacket::encode, NetherrunPlaceBlockPacket::decode, NetherrunPlaceBlockPacket::handle);
         INSTANCE.registerMessage(id++, GoUpParticlePacket.class, GoUpParticlePacket::encode, GoUpParticlePacket::decode, GoUpParticlePacket::handle);
         INSTANCE.registerMessage(id++, ItemCooldownPacket.class, ItemCooldownPacket::encode, ItemCooldownPacket::decode, ItemCooldownPacket::handle);
         INSTANCE.registerMessage(id++, SyncNetherRunScoresPacket.class, SyncNetherRunScoresPacket::encode, SyncNetherRunScoresPacket::new, SyncNetherRunScoresPacket::handle);
     }
 
-    public static void sendToAllPlayers(NetherrunTotemPlaceBlockPacket packet, MinecraftServer server) {
+    public static void sendToAllPlayers(NetherrunPlaceBlockPacket packet, MinecraftServer server) {
         for (ServerPlayer player : server.getPlayerList().getPlayers()) {
             INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), packet);
         }

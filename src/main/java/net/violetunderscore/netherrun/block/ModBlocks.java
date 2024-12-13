@@ -24,12 +24,12 @@ public class ModBlocks {
             DeferredRegister.create(ForgeRegistries.BLOCKS, NetherRun.MODID);
 
     public static final RegistryObject<Block> BLOCK_OF_GO_UP = registerBlock("block_of_go_up",
-            () -> new BlockOfGoUp(BlockBehaviour.Properties.copy(Blocks.NETHERITE_BLOCK).pushReaction(PushReaction.BLOCK)));
+            () -> new BlockOfGoUp(BlockBehaviour.Properties.copy(Blocks.NETHERITE_BLOCK).pushReaction(PushReaction.BLOCK).destroyTime(6)));
     public static final RegistryObject<Block> GO_UP = registerBlock("go_up",
             () -> new GoUpBlock(BlockBehaviour.Properties.of().replaceable().noCollission().noLootTable()));
 
     public static final RegistryObject<Block> BLOCK_OF_GO_DOWN = registerBlock("block_of_go_down",
-            () -> new Block(BlockBehaviour.Properties.copy(Blocks.NETHERITE_BLOCK).pushReaction(PushReaction.BLOCK)));
+            () -> new Block(BlockBehaviour.Properties.copy(Blocks.NETHERITE_BLOCK).pushReaction(PushReaction.BLOCK).destroyTime(6)));
 
     public static final RegistryObject<Block> SOUL_SLIME_BLOCK = registerBlock("soul_slime_block",
             () -> new SoulSlimeBlock(BlockBehaviour.Properties.copy(Blocks.SLIME_BLOCK).speedFactor(0.8f)));
