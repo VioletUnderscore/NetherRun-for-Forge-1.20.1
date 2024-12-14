@@ -4,14 +4,19 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.PauseScreen;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.client.event.ScreenEvent;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
+import net.minecraftforge.event.entity.living.LivingDeathEvent;
+import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -24,10 +29,13 @@ import net.violetunderscore.netherrun.network.GoUpParticlePacket;
 import net.violetunderscore.netherrun.network.ItemCooldownPacket;
 import net.violetunderscore.netherrun.network.NetworkHandler;
 import net.violetunderscore.netherrun.particle.ModParticles;
+import net.violetunderscore.netherrun.variables.global.scores.NetherRunScoresData;
+import net.violetunderscore.netherrun.variables.global.scores.NetherRunScoresDataManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-;import java.util.Random;
+;import java.util.Objects;
+import java.util.Random;
 
 import static net.violetunderscore.netherrun.block.custom.GoUpBlock.*;
 
@@ -48,10 +56,10 @@ public class ForgeEventBusEvents {
 //        return LazyOptional.empty();
 //    }
 
-
     @SubscribeEvent
     public static void onLivingAttack(LivingAttackEvent event) {
         //LOGGER.info("onLivingAttack has been called with MsgID: '" + event.getSource().getMsgId() + "'");
+        boolean totemNegatedDamage = false;
         if (event.getSource().getMsgId().equals("lava") || event.getSource().getMsgId().equals("fall")) {
             //LOGGER.info("Damage is either 'lava' or 'fall'");
             if (event.getEntity().isInLava()) {
@@ -59,10 +67,50 @@ public class ForgeEventBusEvents {
                 if (event.getEntity().getMainHandItem().getItem() == ModItems.NETHERRUN_TOTEM.get() && event.getEntity().getMainHandItem().getTag().getBoolean("netherrun.ready")) {
                     //LOGGER.info("Totem is ready, in your main hand, and your damage has been cancelled");
                     event.setCanceled(true);
+                    totemNegatedDamage = true;
                 }
                 else if (event.getEntity().getOffhandItem().getItem() == ModItems.NETHERRUN_TOTEM.get() && event.getEntity().getOffhandItem().getTag().getBoolean("netherrun.ready")) {
                     //LOGGER.info("Totem is ready, in your off hand, and your damage has been cancelled");
                     event.setCanceled(true);
+                    totemNegatedDamage = true;
+                }
+            }
+        }
+        if (event.getEntity() instanceof Player && !totemNegatedDamage) {
+            ServerLevel overworld = event.getEntity().getServer().getLevel(Level.OVERWORLD);
+            NetherRunScoresData scoresData = NetherRunScoresDataManager.get(overworld);
+            if (scoresData.isRoundActive()) {
+                if ((Objects.equals(scoresData.getPlayer1Name(), event.getEntity().getName().getString())
+                        && scoresData.getWhosTurn() == 1)
+                ||
+                        (Objects.equals(scoresData.getPlayer2Name(), event.getEntity().getName().getString())
+                                && scoresData.getWhosTurn() == 2)
+                )  {
+                    if (event.getEntity().getHealth() - event.getAmount() <= 0) {
+                        specAll(event.getEntity().getServer());
+                        scoresData.setRoundJustEnded(true);
+                        scoresData.setRoundActive(false);
+                        event.setCanceled(true);
+                        event.getEntity().setGlowingTag(false);
+                    }
+                }
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public static void onLivingHurt(LivingHurtEvent event) {
+        if (event.getEntity() instanceof Player) {
+            ServerLevel overworld = event.getEntity().getServer().getLevel(Level.OVERWORLD);
+            NetherRunScoresData scoresData = NetherRunScoresDataManager.get(overworld);
+            if (scoresData.isRoundActive()) {
+                if ((Objects.equals(scoresData.getPlayer1Name(), event.getEntity().getName().getString())
+                            && scoresData.getWhosTurn() == 2)
+                            ||
+                            (Objects.equals(scoresData.getPlayer2Name(), event.getEntity().getName().getString())
+                                    && scoresData.getWhosTurn() == 1)
+                    ) {
+                    event.setAmount(0);
                 }
             }
         }
@@ -97,6 +145,18 @@ public class ForgeEventBusEvents {
             } else if (event.getPlacedBlock().is(ModBlocks.BLOCK_OF_GO_UP.get()) && !pPlayer.isCreative()) {
                 pPlayer.getCooldowns().addCooldown(ModBlocks.BLOCK_OF_GO_UP.get().asItem(), 300);
             }
+        }
+    }
+
+//    @SubscribeEvent
+//    public static void onDeath (LivingDeathEvent event) {
+//
+//    }
+
+    private static void specAll(MinecraftServer server) {
+        for (ServerPlayer player : server.getPlayerList().getPlayers()) {
+            // Set each player to Spectator Mode
+            player.setGameMode(GameType.SPECTATOR);
         }
     }
 }

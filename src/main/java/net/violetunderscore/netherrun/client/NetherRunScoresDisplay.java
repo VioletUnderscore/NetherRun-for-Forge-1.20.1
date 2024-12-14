@@ -19,7 +19,8 @@ public class NetherRunScoresDisplay {
             "textures/gui/role_icons.png");
     public static final IGuiOverlay HUD_NR_SCORE_DISPLAY = ((gui, guiGraphics, partialTick, width, height) -> {
         if (NetherRunGlobalClientData.isGameActive()) {
-            int x = width / 2;
+            // int x = width / 2;
+            int x = 90;
             int y = 0;
             int targetScore = 0;
 

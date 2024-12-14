@@ -1,5 +1,6 @@
 package net.violetunderscore.netherrun.event;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
@@ -9,8 +10,12 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
@@ -22,6 +27,7 @@ import net.minecraftforge.network.PacketDistributor;
 import net.violetunderscore.netherrun.NetherRun;
 import net.violetunderscore.netherrun.client.NetherRunScoresDisplay;
 import net.violetunderscore.netherrun.commands.NetherRunStart;
+import net.violetunderscore.netherrun.network.NetherrunPlaceBlockPacket;
 import net.violetunderscore.netherrun.network.NetworkHandler;
 import net.violetunderscore.netherrun.network.SyncNetherRunScoresPacket;
 import net.violetunderscore.netherrun.variables.global.scores.NetherRunScoresData;
@@ -30,6 +36,9 @@ import net.violetunderscore.netherrun.variables.player.kits.PlayerKits;
 import net.violetunderscore.netherrun.variables.player.kits.PlayerKitsProvider;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.util.Objects;
+import java.util.Random;
 
 
 @Mod.EventBusSubscriber(modid = NetherRun.MODID/*, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.DEDICATED_SERVER*/)
@@ -93,7 +102,8 @@ public class ModEventBusEvents {
     @SubscribeEvent
     public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
         if (event.side == LogicalSide.SERVER) {
-            NetherRunScoresData scoresData = NetherRunScoresDataManager.get((ServerLevel) event.player.level());
+            ServerLevel overworld = event.player.level().getServer().getLevel(Level.OVERWORLD);
+            NetherRunScoresData scoresData = NetherRunScoresDataManager.get(overworld);
             if (scoresData.isGameActive()) {
                 event.player.clearFire();
                 event.player.getFoodData().setFoodLevel(16);
@@ -107,6 +117,22 @@ public class ModEventBusEvents {
                         }
                     }
                 });
+                if (Objects.equals(scoresData.getPlayer1Name(), event.player.getName().getString())) {
+                    if (scoresData.getWhosTurn() == 1) {
+                        supplyPlayer(true, event.player);
+                    }
+                    else {
+                        supplyPlayer(false, event.player);
+                    }
+                }
+                else if (Objects.equals(scoresData.getPlayer2Name(), event.player.getName().getString())) {
+                    if (scoresData.getWhosTurn() == 2) {
+                        supplyPlayer(true, event.player);
+                    }
+                    else {
+                        supplyPlayer(false, event.player);
+                    }
+                }
             }
         }
 
@@ -115,6 +141,7 @@ public class ModEventBusEvents {
     @SubscribeEvent
     public static void onWorldTick(TickEvent.LevelTickEvent event) {
         if (event.level.dimension() == Level.OVERWORLD && !event.level.isClientSide()) {
+            MinecraftServer server = event.level.getServer();
             ServerLevel serverLevel = (ServerLevel) event.level;
             NetherRunScoresData scoresData = NetherRunScoresDataManager.get(serverLevel);
 
@@ -130,28 +157,50 @@ public class ModEventBusEvents {
                                 scoresData.getSpawnTimerH(),
                                 scoresData.getRound(),
                                 scoresData.getWhosTurn(),
+                                scoresData.getSpawnX(),
+                                scoresData.getSpawnY(),
+                                scoresData.getSpawnZ(),
+                                scoresData.getColor1(),
+                                scoresData.getColor2(),
+                                scoresData.getNetherRoof(),
+                                scoresData.getNetherFloor(),
                                 scoresData.isGameActive(),
                                 scoresData.isRoundActive(),
                                 scoresData.isTeam1Ready(),
                                 scoresData.isTeam2Ready(),
-                                scoresData.isRoundJustEnded()));
+                                scoresData.isRoundJustEnded(),
+                                scoresData.getPlayer1Name(),
+                                scoresData.getPlayer2Name()
+                        ));
             });
 
 
-            LOGGER.info("t1: {}, t2: {}, trg: {}, w: {}, rt: {}, ht: {}, round: {}, whoturn: {}, gactive: {}, ractive: {}, ready1: {}, 2: {}, end: {}",
-                    scoresData.getTeam1Score(),
-                    scoresData.getTeam2Score(),
-                    scoresData.getTargetScore(),
-                    scoresData.getWaitingTimer(),
-                    scoresData.getSpawnTimerR(),
-                    scoresData.getSpawnTimerH(),
-                    scoresData.getRound(),
-                    scoresData.getWhosTurn(),
-                    scoresData.isGameActive(),
-                    scoresData.isRoundActive(),
-                    scoresData.isTeam1Ready(),
-                    scoresData.isTeam2Ready(),
-                    scoresData.isRoundJustEnded() );
+//            LOGGER.info("t1: {}, t2: {}, trg: {}, w: {}, rt: {}, ht: {}, round: {}, whoturn: {}, x: {}, y: {}, z: {}, \n" +
+//                                "color1: {}, color2: {}, roof: {}, floor: {}, gactive: {}, ractive: {}, ready1: {}, 2: {}, end: {}, p1: {}, p2: {}",
+//
+//                    scoresData.getTeam1Score(),
+//                    scoresData.getTeam2Score(),
+//                    scoresData.getTargetScore(),
+//                    scoresData.getWaitingTimer(),
+//                    scoresData.getSpawnTimerR(),
+//                    scoresData.getSpawnTimerH(),
+//                    scoresData.getRound(),
+//                    scoresData.getWhosTurn(),
+//                    scoresData.getSpawnX(),
+//                    scoresData.getSpawnY(),
+//                    scoresData.getSpawnZ(),
+//                    scoresData.getColor1(),
+//                    scoresData.getColor2(),
+//                    scoresData.getNetherRoof(),
+//                    scoresData.getNetherFloor(),
+//                    scoresData.isGameActive(),
+//                    scoresData.isRoundActive(),
+//                    scoresData.isTeam1Ready(),
+//                    scoresData.isTeam2Ready(),
+//                    scoresData.isRoundJustEnded(),
+//                    scoresData.getPlayer1Name(),
+//                    scoresData.getPlayer2Name()
+//                    );
 
 
             if (scoresData.isGameActive()) {
@@ -159,7 +208,7 @@ public class ModEventBusEvents {
                     scoresData.setWhosTurn(scoresData.getWhosTurn() + 1);
                     if (scoresData.getWhosTurn() > 2) {
                         broadcastMessageToAllPlayers(event.level.getServer(), Component.literal(
-                                "Round " + scoresData.getRound() + " is over! (" + NetherRunScoresDisplay.timeToString(scoresData.getTeam1Score()) + " - " + NetherRunScoresDisplay.timeToString(scoresData.getTeam2Score()) + ")"));
+                                "Round " + scoresData.getRound() + " is over! (" + timeToString(scoresData.getTeam1Score()) + " - " + timeToString(scoresData.getTeam2Score()) + ")"));
                         scoresData.setWhosTurn(1);
                         scoresData.setRound(scoresData.getRound() + 1);
                         if (Math.max(scoresData.getTeam1Score(), scoresData.getTeam2Score()) > scoresData.getTargetScore()) {
@@ -179,22 +228,97 @@ public class ModEventBusEvents {
                                 "Starting Round " + (scoresData.getRound()) + "..."));
                     }
                     if (scoresData.isGameActive()) {
-                        broadcastMessageToAllPlayers(event.level.getServer(), Component.literal(
-                                "Your turn, player " + (scoresData.getWhosTurn()) + "!"));
+                        if (scoresData.getWhosTurn() == 1) {
+                            broadcastMessageToAllPlayers(event.level.getServer(), Component.literal(
+                                    "Your turn, " + (scoresData.getPlayer1Name()) + "!"));
+                        }
+                        else if (scoresData.getWhosTurn() == 2) {
+                            broadcastMessageToAllPlayers(event.level.getServer(), Component.literal(
+                                    "Your turn, " + (scoresData.getPlayer2Name()) + "!"));
+                        }
+                        else {
+                            broadcastMessageToAllPlayers(event.level.getServer(), Component.literal(
+                                    "Uhhh, the variable says it's... neither of your turns? suffice to say, something is going wrong... (" +
+                                    scoresData.getWhosTurn() + ")"));
+                        }
                     }
                     scoresData.setRoundJustEnded(false);
                 }
                 if (scoresData.isRoundActive()) {
+
                     if (scoresData.getSpawnTimerR() != 0) {
                         scoresData.setSpawnTimerR(scoresData.getSpawnTimerR() - 1);
                         if (scoresData.getSpawnTimerR() == 0) {
-                            //spawn runner
+                            //SPAWN RUNNER
+
+                            getRunner(scoresData, server).setGameMode(GameType.SURVIVAL);
+                            getRunner(scoresData, server).setHealth(20);
+                            getRunner(scoresData, server).teleportTo(
+                                    getRunner(scoresData, server).position().x,
+                                    getRunner(scoresData, server).position().y,
+                                    getRunner(scoresData, server).position().z
+                            );
+                            scoresData.setSpawnX((int) Math.floor(getRunner(scoresData, server).position().x));
+                            scoresData.setSpawnY((int) Math.floor(getRunner(scoresData, server).position().y));
+                            scoresData.setSpawnZ((int) Math.floor(getRunner(scoresData, server).position().z));
+
+                            BlockState pBlockToPlace = Blocks.CRYING_OBSIDIAN.defaultBlockState();
+                            for (int yValue = -1; yValue <= 3; yValue += 1) {
+                                if (yValue == 3) {
+                                    pBlockToPlace = Blocks.CRYING_OBSIDIAN.defaultBlockState();
+                                }
+                                for (int xValue = -1; xValue <= 1; xValue += 1) {
+                                    for (int zValue = -1; zValue <= 1; zValue += 1) {
+                                        BlockPos pos = BlockPos.containing(
+                                                scoresData.getSpawnX() + xValue,
+                                                scoresData.getSpawnY() + yValue,
+                                                scoresData.getSpawnZ() + zValue
+                                        );
+                                        LOGGER.info("Placing block at {} with state {}", pos, pBlockToPlace);
+                                        getRunner(scoresData, server).serverLevel().setBlock(pos, pBlockToPlace, 3);
+                                        LOGGER.info("Block placed at {}?", pos);
+                                        NetworkHandler.sendToAllPlayers(new NetherrunPlaceBlockPacket(pos, pBlockToPlace), serverLevel.getServer());
+                                    }
+                                }
+                                pBlockToPlace = Blocks.AIR.defaultBlockState();
+                            }
                             scoresData.setSpawnTimerH(200);
+
+                            BlockPos testPos = new BlockPos(100, 64, 100); // Replace with safe test coordinates
+                            BlockState testBlock = Blocks.DIAMOND_BLOCK.defaultBlockState();
+                            serverLevel.setBlock(testPos, testBlock, 3);
+                            LOGGER.info("Test block placed?");
                         }
                     } else if (scoresData.getSpawnTimerH() != 0) {
                         scoresData.setSpawnTimerH(scoresData.getSpawnTimerH() - 1);
                         if (scoresData.getSpawnTimerH() == 0) {
-                            //spawn hunter
+                            //SPAWN HUNTER
+                            getHunter(scoresData, server).setGameMode(GameType.SURVIVAL);
+                            getHunter(scoresData, server).setHealth(20);
+                            getHunter(scoresData, server).teleportTo(
+                                    scoresData.getSpawnX(),
+                                    scoresData.getSpawnY(),
+                                    scoresData.getSpawnZ()
+                            );
+
+                            BlockState pBlockToPlace = Blocks.CRYING_OBSIDIAN.defaultBlockState();
+                            for (int yValue = -1; yValue <= 3; yValue += 1) {
+                                if (yValue == 3) {
+                                    pBlockToPlace = Blocks.CRYING_OBSIDIAN.defaultBlockState();
+                                }
+                                for (int xValue = -1; xValue <= 1; xValue += 1) {
+                                    for (int zValue = -1; zValue <= 1; zValue += 1) {
+                                        BlockPos pos = BlockPos.containing(
+                                                scoresData.getSpawnX() + xValue,
+                                                scoresData.getSpawnY() + yValue,
+                                                scoresData.getSpawnZ() + zValue
+                                        );
+                                        serverLevel.setBlock(pos, pBlockToPlace, 3);
+                                        NetworkHandler.sendToAllPlayers(new NetherrunPlaceBlockPacket(pos, pBlockToPlace), serverLevel.getServer());
+                                    }
+                                }
+                                pBlockToPlace = Blocks.AIR.defaultBlockState();
+                            }
                         }
                     } else
                         if (scoresData.getWhosTurn() == 1) {
@@ -202,14 +326,14 @@ public class ModEventBusEvents {
                         } else if (scoresData.getWhosTurn() == 2) {
                             scoresData.setTeam2Score(scoresData.getTeam2Score() + 1);
                         } else {
-                            LOGGER.error("If returned else - violetunderscore.netherrun.client.ModEventBusEvents/onWorldTick:201");
+                            LOGGER.error("Global Variable \"whosTurn\" is neither 1 nor 2 - violetunderscore.netherrun.client.ModEventBusEvents/onWorldTick:216 (or somewhere around there)");
                         }
                 }
                 else if (scoresData.isTeam1Ready() && scoresData.isTeam2Ready()) {
                     scoresData.setRoundActive(true);
                     scoresData.setSpawnTimerR(600);
-                    //tp all to random location
-                    specAll(((ServerLevel) event.level).getLevel());
+                    teleAll(server, new Vec3(new Random().nextInt(20000) - 10000, 100, new Random().nextInt(20000) - 10000)); /* not working??? */
+                    specAll(server);
                     //mark hunter as hunter and runner as runner
                     scoresData.setTeam1Ready(false);
                     scoresData.setTeam2Ready(false);
@@ -222,12 +346,62 @@ public class ModEventBusEvents {
         server.getPlayerList().broadcastSystemMessage(message, false); // The 'false' means it's not a system message
     }
 
-    private static void specAll(ServerLevel level) {
-        for (ServerPlayer player : level.getServer().getPlayerList().getPlayers()) {
+    private static void specAll(MinecraftServer server) {
+        for (ServerPlayer player : server.getPlayerList().getPlayers()) {
             // Set each player to Spectator Mode
             player.setGameMode(GameType.SPECTATOR);
         }
     }
+    private static void teleAll(MinecraftServer server, Vec3 pPos) {
+        for (ServerPlayer player : server.getPlayerList().getPlayers()) {
+            // teleport each player
+            LOGGER.info("Teleporting player {} to {}", player.getName().getString(), pPos);
+            player.teleportTo(player.serverLevel(), pPos.x, pPos.y, pPos.z, player.getYRot(), player.getXRot());
+        }
+    }
 
+    private static ServerPlayer getRunner (NetherRunScoresData scoresData, MinecraftServer server) {
+        if (scoresData.getWhosTurn() == 1) {
+            return server.getPlayerList().getPlayerByName(scoresData.getPlayer1Name());
+        }
+        return server.getPlayerList().getPlayerByName(scoresData.getPlayer2Name());
+    }
 
+    private static ServerPlayer getHunter (NetherRunScoresData scoresData, MinecraftServer server) {
+        if (scoresData.getWhosTurn() == 2) {
+            return server.getPlayerList().getPlayerByName(scoresData.getPlayer1Name());
+        }
+        return server.getPlayerList().getPlayerByName(scoresData.getPlayer2Name());
+    }
+
+    private static void supplyPlayer(boolean isRunner, Player player) {
+        if (isRunner) {
+            player.getInventory().armor.set(3, new ItemStack(Items.DIAMOND_HELMET));
+            player.getInventory().armor.set(2, new ItemStack(Items.LEATHER_CHESTPLATE));
+            player.getInventory().armor.set(1, new ItemStack(Items.LEATHER_LEGGINGS));
+            player.getInventory().armor.set(0, new ItemStack(Items.DIAMOND_BOOTS));
+            player.setGlowingTag(true);
+            player.heal(0.01f);
+        }
+        else {
+            player.getInventory().armor.set(3, new ItemStack(Items.NETHERITE_HELMET));
+            player.getInventory().armor.set(2, new ItemStack(Items.NETHERITE_CHESTPLATE));
+            player.getInventory().armor.set(1, new ItemStack(Items.NETHERITE_LEGGINGS));
+            player.getInventory().armor.set(0, new ItemStack(Items.NETHERITE_BOOTS));
+            player.setGlowingTag(false);
+        }
+    }
+
+    public static String timeToString(int time) {
+        if (time > 118800) {
+            return "99+";
+        }
+        return (""
+                + (int)(Math.floor(time / 24000) - (Math.floor(time / 240000) * 10))
+                + (int)(Math.floor(time / 2400) - (Math.floor(time / 24000) * 10))
+                + ":"
+                + (int)Math.floor((Math.floor(time / 40) - (Math.floor((time / 40) / 60) * 60)) / 10)
+                + (int)((Math.floor(time / 40) - (Math.floor((time / 40) / 60) * 60)) - ((Math.floor((Math.floor(time / 40) - (Math.floor((time / 40) / 60) * 60)) / 10)) * 10))
+        );
+    }
 }

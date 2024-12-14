@@ -11,10 +11,13 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.GameType;
+import net.minecraft.world.level.Level;
 import net.violetunderscore.netherrun.variables.global.scores.NetherRunScoresData;
 import net.violetunderscore.netherrun.variables.global.scores.NetherRunScoresDataManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.util.Objects;
 
 public class NetherRunStart {
     private static final Logger LOGGER = LogManager.getLogger();
@@ -81,12 +84,6 @@ public class NetherRunStart {
         );
         dispatcher.register(
                 Commands.literal("netherrun")
-                        .then(Commands.literal("end")
-                                .executes(NetherRunStart::executeEnd)
-                        )
-        );
-        dispatcher.register(
-                Commands.literal("netherrun")
                         .then(Commands.literal("ready")
                                 .executes(NetherRunStart::executeReady)
                         )
@@ -94,7 +91,9 @@ public class NetherRunStart {
     }
 
     private static int executeStart(CommandContext<CommandSourceStack> context, int measurement) {
-        NetherRunScoresData scoresData = NetherRunScoresDataManager.get(context.getSource().getLevel());
+
+        ServerLevel overworld = context.getSource().getServer().getLevel(Level.OVERWORLD);
+        NetherRunScoresData scoresData = NetherRunScoresDataManager.get(overworld);
 
         if (!scoresData.isGameActive()) {
             Player player1;
@@ -114,11 +113,15 @@ public class NetherRunStart {
                 return 0;
             }
 
+            if (player1 == player2) {
+                context.getSource().sendFailure(Component.literal("Player1 can not be Player2."));
+                return 0;
+            }
             int time = IntegerArgumentType.getInteger(context, "Game Length");
 
             context.getSource().sendSuccess(() -> Component.literal("NETHER RUN STARTING!"), false);
 
-            specAll(context.getSource().getLevel());
+            specAll(overworld);
             scoresData.setTeam1Score(0);
             scoresData.setTeam2Score(0);
             scoresData.setTargetScore(time * measurement);
@@ -128,6 +131,8 @@ public class NetherRunStart {
             scoresData.setRoundActive(false);
             scoresData.setTeam1Ready(false);
             scoresData.setTeam2Ready(false);
+            scoresData.setPlayer1Name(player1.getName().getString());
+            scoresData.setPlayer2Name(player2.getName().getString());
             return 1;
         }
         else
@@ -150,7 +155,8 @@ public class NetherRunStart {
 
 
     private static int executeStop(CommandContext<CommandSourceStack> context) {
-        NetherRunScoresData scoresData = NetherRunScoresDataManager.get(context.getSource().getLevel());
+        ServerLevel overworld = context.getSource().getServer().getLevel(Level.OVERWORLD);
+        NetherRunScoresData scoresData = NetherRunScoresDataManager.get(overworld);
 
         if (scoresData.isGameActive()) {
             context.getSource().sendSuccess(() -> Component.literal("NETHER RUN STOPPING!"), false);
@@ -182,23 +188,43 @@ public class NetherRunStart {
         }
     }
 
-    private static int executeEnd(CommandContext<CommandSourceStack> context) {
-        NetherRunScoresData scoresData = NetherRunScoresDataManager.get(context.getSource().getLevel());
-        context.getSource().sendSuccess(() -> Component.literal("ENDING ROUND"), false);
-
-        specAll(context.getSource().getLevel());
-        scoresData.setRoundJustEnded(true);
-        scoresData.setRoundActive(false);
-        return 1;
-    }
-
     private static int executeReady(CommandContext<CommandSourceStack> context) {
-        NetherRunScoresData scoresData = NetherRunScoresDataManager.get(context.getSource().getLevel());
-        context.getSource().sendSuccess(() -> Component.literal("READY!"), false);
+        ServerLevel overworld = context.getSource().getServer().getLevel(Level.OVERWORLD);
+        NetherRunScoresData scoresData = NetherRunScoresDataManager.get(overworld);
 
-        scoresData.setTeam1Ready(true);
-        scoresData.setTeam2Ready(true);
-        return 1;
+        if (scoresData.isGameActive()) {
+            if (scoresData.isRoundActive()) {
+                context.getSource().sendFailure(Component.literal("The round has already started"));
+                return 0;
+            }
+            else
+            {
+                if (Objects.equals(scoresData.getPlayer1Name(), context.getSource().getEntity().getName().getString())) {
+                    scoresData.setTeam1Ready(!scoresData.isTeam1Ready());
+                    if (scoresData.isTeam1Ready()) {
+                        context.getSource().sendSuccess(() -> Component.literal("You are ready!"), false);
+                        return 1;
+                    }
+                    context.getSource().sendSuccess(() -> Component.literal("You are not ready!"), false);
+                    return 1;
+                }
+                else if (Objects.equals(scoresData.getPlayer2Name(), context.getSource().getEntity().getName().getString())) {
+                    scoresData.setTeam2Ready(!scoresData.isTeam2Ready());
+                    if (scoresData.isTeam2Ready()) {
+                        context.getSource().sendSuccess(() -> Component.literal("You are ready!"), false);
+                        return 1;
+                    }
+                    context.getSource().sendSuccess(() -> Component.literal("You are not ready!"), false);
+                    return 1;
+                }
+                else {
+                    context.getSource().sendFailure(Component.literal("Nobody asked for your opinion, " + context.getSource().getEntity().getName().getString() + "."));
+                    return 0;
+                }
+            }
+        }
+        context.getSource().sendFailure(Component.literal("There is no Netherrun game to be ready for."));
+        return 0;
     }
 }
 
