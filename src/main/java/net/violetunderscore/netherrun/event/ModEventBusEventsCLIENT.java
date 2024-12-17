@@ -17,6 +17,7 @@ import net.violetunderscore.netherrun.entity.client.ModModelLayers;
 import net.violetunderscore.netherrun.particle.ModParticles;
 import net.violetunderscore.netherrun.particle.custom.GoUpParticles;
 import net.violetunderscore.netherrun.particle.custom.GoUpPlacedParticles;
+import net.violetunderscore.netherrun.variables.player.kits.PlayerKitsProvider;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -25,29 +26,23 @@ import org.apache.logging.log4j.Logger;
 public class ModEventBusEventsCLIENT {
 
     private static final Logger LOGGER = LogManager.getLogger();
-    @SubscribeEvent
-    public static void registerParticleFactories(final RegisterParticleProvidersEvent event) {
-        Minecraft.getInstance().particleEngine.register(ModParticles.GO_UP_PARTICLES.get(),
-                GoUpParticles.Provider::new);
-        Minecraft.getInstance().particleEngine.register(ModParticles.GO_UP_PLACED_PARTICLES.get(),
-                GoUpPlacedParticles.Provider::new);
-    }
-
-    @SubscribeEvent
-    public static void registerLayer(EntityRenderersEvent.RegisterLayerDefinitions event) {
-        event.registerLayerDefinition(ModModelLayers.NETHERRUN_BOAT_LAYER, BoatModel::createBodyModel);
-        event.registerLayerDefinition(ModModelLayers.NETHERRUN_CHEST_BOAT_LAYER, ChestBoatModel::createBodyModel);
-    }
-
-    @SubscribeEvent
-    public static void registerGuiOverlays(RegisterGuiOverlaysEvent event) {
-        event.registerAboveAll("nr_scoreboard", NetherRunScoresDisplay.HUD_NR_SCORE_DISPLAY);
-    }
 
     @SubscribeEvent
     public static void onClientTick(TickEvent.ClientTickEvent event) {
-        while (NetherRunKeybinds.NETHERRUN_TELEPORT.consumeClick()) {
-
+        if (event.phase == TickEvent.Phase.END) {
+            Minecraft minecraft = Minecraft.getInstance();
+            if (minecraft.player != null) {
+                if (NetherRunKeybinds.NETHERRUN_TELEPORT.isDown()) {
+                    minecraft.player.getCapability(PlayerKitsProvider.PLAYER_KITS).ifPresent(kit -> {
+                        kit.setKeyDown(true);
+                    });
+                }
+                else {
+                    minecraft.player.getCapability(PlayerKitsProvider.PLAYER_KITS).ifPresent(kit -> {
+                        kit.setKeyDown(false);
+                    });
+                }
+            }
         }
     }
 
