@@ -4,7 +4,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.phys.Vec3;
 import net.violetunderscore.netherrun.block.ModBlocks;
 import net.violetunderscore.netherrun.item.ItemFetcher;
 import net.violetunderscore.netherrun.item.ModItems;
@@ -22,14 +21,6 @@ public class PlayerKits {
             "netherrun:netherrun_boat",
             "netherrun:netherrun_totem"
     };
-
-    private int warpx = 0;
-    private int warpy = 0;
-    private int warpz = 0;
-    private int warptimer = 0;
-    private boolean canwarp = false;
-    private boolean keydown = false;
-    private boolean iswarping = false;
 
     public Item getKitItem(int slot) {
         return ItemFetcher.getItem(playerKit[slot]);
@@ -60,42 +51,5 @@ public class PlayerKits {
         for (int v = 0; v < 10; v++) {
             playerKit[v] = nbt.getString("NRKit" + v);
         }
-    }
-
-
-
-    public void setWarp(int x, int y, int z, int time) {
-        warpx = x;
-        warpy = y;
-        warpz = z;
-        warptimer = time;
-    }
-    public void setWarpTimer (int time) {
-        warptimer = time;
-    }
-    public void setWarping (boolean v) {
-        iswarping = v;
-    }
-    public void setCanWarp(boolean v) {
-        canwarp = v;
-    }
-    public boolean getCanWarp() {
-        return canwarp;
-    }
-
-    public int getWarpTime() {
-        return warptimer;
-    }
-    public Vec3 getWarpSpace() {
-        return new Vec3(warpx, warpy, warpz);
-    }
-    public boolean isWarping() {
-        return iswarping;
-    }
-    public void setKeyDown(boolean v) {
-        keydown = v;
-    }
-    public boolean getKeyDown() {
-        return keydown;
     }
 }

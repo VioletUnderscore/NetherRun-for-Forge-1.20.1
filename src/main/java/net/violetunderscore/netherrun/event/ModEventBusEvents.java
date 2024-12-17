@@ -8,6 +8,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.GameType;
@@ -24,6 +25,9 @@ import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.network.PacketDistributor;
 import net.violetunderscore.netherrun.NetherRun;
+import net.violetunderscore.netherrun.client.NetherRunGlobalClientData;
+import net.violetunderscore.netherrun.client.NetherRunScoresDisplay;
+import net.violetunderscore.netherrun.commands.NetherRunStart;
 import net.violetunderscore.netherrun.network.NetherrunPlaceBlockPacket;
 import net.violetunderscore.netherrun.network.NetworkHandler;
 import net.violetunderscore.netherrun.network.SyncNetherRunScoresPacket;
@@ -138,86 +142,12 @@ public class ModEventBusEvents {
                             supplyPlayer(true, event.player);
                         } else {
                             supplyPlayer(false, event.player);
-                            try {
-                                Player runner = event.player.level().getServer().getPlayerList().getPlayerByName(scoresData.getPlayer2Name());
-                                event.player.getCapability(PlayerKitsProvider.PLAYER_KITS).ifPresent(kit -> {
-                                    if (kit.isWarping() && kit.getWarpTime() == 0) {
-                                        kit.setWarping(false);
-                                        event.player.teleportTo(kit.getWarpSpace().x, kit.getWarpSpace().y, kit.getWarpSpace().z);
-                                        BlockState pBlockToPlace = Blocks.CRYING_OBSIDIAN.defaultBlockState();
-                                        for (int yValue = -1; yValue <= 3; yValue += 1) {
-                                            if (yValue == 3) {
-                                                pBlockToPlace = Blocks.CRYING_OBSIDIAN.defaultBlockState();
-                                            }
-                                            for (int xValue = -1; xValue <= 1; xValue += 1) {
-                                                for (int zValue = -1; zValue <= 1; zValue += 1) {
-                                                    BlockPos pos = BlockPos.containing(
-                                                            kit.getWarpSpace().x + xValue,
-                                                            kit.getWarpSpace().y + yValue,
-                                                            kit.getWarpSpace().z + zValue
-                                                    );
-                                                    event.player.level().setBlock(pos, pBlockToPlace, 3);
-                                                    NetworkHandler.sendToAllPlayers(new NetherrunPlaceBlockPacket(pos, pBlockToPlace), event.player.getServer());
-                                                }
-                                            }
-                                            pBlockToPlace = Blocks.AIR.defaultBlockState();
-                                        }
-                                    }
-                                    if (kit.getWarpTime() != 0) {
-                                        kit.setWarpTimer(kit.getWarpTime() - 1);
-                                    }
-                                    kit.setCanWarp(Math.max(Math.abs(runner.position().x - event.player.position().x), Math.abs(runner.position().z - event.player.position().z)) > 50 || Math.abs(runner.position().y - event.player.position().y) > 50);
-                                    if (kit.getCanWarp() && kit.getKeyDown() && kit.getWarpTime() == 0) {
-                                        kit.setWarp((int) Math.floor(runner.position().x), (int) Math.floor(runner.position().y), (int) Math.floor(runner.position().z), 120);
-                                        kit.setWarping(true);
-                                    }
-                                });
-                            } catch (NullPointerException e) {
-                                LOGGER.error("Failed to check hunter warp status");
-                            }
                         }
                     } else if (team == 2) {
                         if (scoresData.getWhosTurn() == 2) {
                             supplyPlayer(true, event.player);
                         } else {
                             supplyPlayer(false, event.player);
-                            try {
-                                Player runner = event.player.level().getServer().getPlayerList().getPlayerByName(scoresData.getPlayer1Name());
-                                event.player.getCapability(PlayerKitsProvider.PLAYER_KITS).ifPresent(kit -> {
-                                    if (kit.isWarping() && kit.getWarpTime() == 0) {
-                                        kit.setWarping(false);
-                                        event.player.teleportTo(kit.getWarpSpace().x, kit.getWarpSpace().y, kit.getWarpSpace().z);
-                                        BlockState pBlockToPlace = Blocks.CRYING_OBSIDIAN.defaultBlockState();
-                                        for (int yValue = -1; yValue <= 3; yValue += 1) {
-                                            if (yValue == 3) {
-                                                pBlockToPlace = Blocks.CRYING_OBSIDIAN.defaultBlockState();
-                                            }
-                                            for (int xValue = -1; xValue <= 1; xValue += 1) {
-                                                for (int zValue = -1; zValue <= 1; zValue += 1) {
-                                                    BlockPos pos = BlockPos.containing(
-                                                            kit.getWarpSpace().x + xValue,
-                                                            kit.getWarpSpace().y + yValue,
-                                                            kit.getWarpSpace().z + zValue
-                                                    );
-                                                    event.player.level().setBlock(pos, pBlockToPlace, 3);
-                                                    NetworkHandler.sendToAllPlayers(new NetherrunPlaceBlockPacket(pos, pBlockToPlace), event.player.getServer());
-                                                }
-                                            }
-                                            pBlockToPlace = Blocks.AIR.defaultBlockState();
-                                        }
-                                    }
-                                    if (kit.getWarpTime() != 0) {
-                                        kit.setWarpTimer(kit.getWarpTime() - 1);
-                                    }
-                                    kit.setCanWarp(Math.max(Math.abs(runner.position().x - event.player.position().x), Math.abs(runner.position().z - event.player.position().z)) > 50 || Math.abs(runner.position().y - event.player.position().y) > 50);
-                                    if (kit.getCanWarp() && kit.getKeyDown() && kit.getWarpTime() == 0) {
-                                        kit.setWarp((int) Math.floor(runner.position().x), (int) Math.floor(runner.position().y), (int) Math.floor(runner.position().z), 120);
-                                        kit.setWarping(true);
-                                    }
-                                });
-                            } catch (NullPointerException e) {
-                                LOGGER.error("Failed to check hunter warp status");
-                            }
                         }
                     }
                 }

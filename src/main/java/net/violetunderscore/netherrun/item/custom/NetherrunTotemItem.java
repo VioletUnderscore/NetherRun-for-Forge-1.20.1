@@ -52,7 +52,7 @@ public class NetherrunTotemItem extends Item {
                                 BlockState pBlockToPlace = Blocks.CRYING_OBSIDIAN.defaultBlockState();
                                 for (int yValue = -1; yValue <= 3; yValue += 1) {
                                     if (yValue == 3) {
-                                        //pBlockToPlace = Blocks.CRYING_OBSIDIAN.defaultBlockState();
+                                        pBlockToPlace = Blocks.CRYING_OBSIDIAN.defaultBlockState();
                                     }
                                     for (int xValue = -1; xValue <= 1; xValue += 1) {
                                         for (int zValue = -1; zValue <= 1; zValue += 1) {
