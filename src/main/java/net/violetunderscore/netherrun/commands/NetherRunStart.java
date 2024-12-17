@@ -4,6 +4,7 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
+import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
@@ -11,11 +12,14 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
+import net.violetunderscore.netherrun.item.ItemFetcher;
 import net.violetunderscore.netherrun.variables.colorEnums;
 import net.violetunderscore.netherrun.variables.global.scores.NetherRunScoresData;
 import net.violetunderscore.netherrun.variables.global.scores.NetherRunScoresDataManager;
+import net.violetunderscore.netherrun.variables.player.kits.PlayerKitsProvider;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -132,6 +136,32 @@ public class NetherRunStart {
             }
 
             dispatcher.register(netherrunCommand);
+        }
+        /*kits*/{
+            dispatcher.register(
+                    Commands.literal("netherrun")
+                            .then(Commands.literal("kit")
+                                    .then(Commands.literal("load")
+                                            .executes(NetherRunStart::executeKitLoad)
+                                    )
+                            )
+            );
+            dispatcher.register(
+                    Commands.literal("netherrun")
+                            .then(Commands.literal("kit")
+                                    .then(Commands.literal("save")
+                                            .executes(NetherRunStart::executeKitSave)
+                                    )
+                            )
+            );
+        }
+        /*help*/{
+            dispatcher.register(
+                    Commands.literal("netherrun")
+                            .then(Commands.literal("help")
+                                    .executes(NetherRunStart::executeHelp)
+                            )
+            );
         }
     }
 
@@ -305,6 +335,71 @@ public class NetherRunStart {
         }
         context.getSource().sendFailure(Component.literal("There is no NetherRun game active."));
         return 0;
+    }
+
+
+
+    private static int executeKitLoad(CommandContext<CommandSourceStack> context) {
+        try {
+            context.getSource().getEntity().getCapability(PlayerKitsProvider.PLAYER_KITS).ifPresent(kit -> {
+                Player player = (Player) context.getSource().getEntity();
+                player.getInventory().offhand.set(0, new ItemStack(kit.getKitItem(0), kit.getKitItem(0).getMaxStackSize()));
+                for (int v = 0; v < 9; v++) {
+                    player.getInventory().setItem(v, new ItemStack(kit.getKitItem(v + 1), kit.getKitItem(v + 1).getMaxStackSize()));
+                }
+            });
+            context.getSource().sendSuccess(() -> Component.literal("Your kit has been loaded"), false);
+            return 1;
+        } catch (NullPointerException e) {
+            context.getSource().sendFailure(Component.literal(e.getMessage()));
+            return 0;
+        }
+    }
+    private static int executeKitSave(CommandContext<CommandSourceStack> context) {
+        try {
+            context.getSource().getEntity().getCapability(PlayerKitsProvider.PLAYER_KITS).ifPresent(kit -> {
+                Player player = (Player) context.getSource().getEntity();
+                kit.setKit(new String[]{
+                        ItemFetcher.ungetItem(player.getInventory().offhand.get(0).getItem()),
+                        ItemFetcher.ungetItem(player.getInventory().getItem(0).getItem()),
+                        ItemFetcher.ungetItem(player.getInventory().getItem(1).getItem()),
+                        ItemFetcher.ungetItem(player.getInventory().getItem(2).getItem()),
+                        ItemFetcher.ungetItem(player.getInventory().getItem(3).getItem()),
+                        ItemFetcher.ungetItem(player.getInventory().getItem(4).getItem()),
+                        ItemFetcher.ungetItem(player.getInventory().getItem(5).getItem()),
+                        ItemFetcher.ungetItem(player.getInventory().getItem(6).getItem()),
+                        ItemFetcher.ungetItem(player.getInventory().getItem(7).getItem()),
+                        ItemFetcher.ungetItem(player.getInventory().getItem(8).getItem()),
+                });
+            });
+            context.getSource().sendSuccess(() -> Component.literal("Your kit has been saved"), false);
+            return 1;
+        } catch (NullPointerException e) {
+            context.getSource().sendFailure(Component.literal(e.getMessage()));
+            return 0;
+        }
+    }
+
+
+
+    private static int executeHelp(CommandContext<CommandSourceStack> context) {
+            context.getSource().sendSuccess(() -> Component.literal("===============NetherRun Help===============").withStyle(ChatFormatting.BOLD), false);
+
+            context.getSource().sendSuccess(() -> Component.literal("/netherrun kit load").withStyle(ChatFormatting.BOLD)
+                    .append(" - loads your kit to your hotbar").withStyle(ChatFormatting.RESET), false);
+            context.getSource().sendSuccess(() -> Component.literal("/netherrun kit save").withStyle(ChatFormatting.BOLD)
+                    .append(" - sets your kit to your hotbar").withStyle(ChatFormatting.RESET), false);
+            context.getSource().sendSuccess(() -> Component.literal("/netherrun bounds").withStyle(ChatFormatting.BOLD)
+                    .append(" - Set the nether roof and nether floor limits").withStyle(ChatFormatting.RESET), false);
+            context.getSource().sendSuccess(() -> Component.literal("/netherrun start").withStyle(ChatFormatting.BOLD)
+                    .append(" - starts NetherRun").withStyle(ChatFormatting.RESET), false);
+            context.getSource().sendSuccess(() -> Component.literal("/netherrun stop").withStyle(ChatFormatting.BOLD)
+                    .append(" - stops NetherRun").withStyle(ChatFormatting.RESET), false);
+            context.getSource().sendSuccess(() -> Component.literal("/netherrun ready").withStyle(ChatFormatting.BOLD)
+                    .append(" - marks you as ready").withStyle(ChatFormatting.RESET), false);
+            context.getSource().sendSuccess(() -> Component.literal("/netherrun color").withStyle(ChatFormatting.BOLD)
+                    .append(" - sets your team color").withStyle(ChatFormatting.RESET), false);
+            return 1;
     }
 
 
