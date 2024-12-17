@@ -7,12 +7,16 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.util.ByIdMap;
 import net.minecraft.util.StringRepresentable;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.vehicle.Boat;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.gameevent.GameEvent;
 import net.violetunderscore.netherrun.entity.ModEntities;
 import net.violetunderscore.netherrun.item.ModItems;
 
@@ -24,12 +28,43 @@ public class NetherRunBoatEntity extends Boat {
         super(pEntityType, pLevel);
     }
 
+
     public NetherRunBoatEntity(Level level, double pX, double pY, double pZ) {
         this(ModEntities.NETHERRUN_BOAT.get(), level);
         this.setPos(pX, pY, pZ);
         this.xo = pX;
         this.yo = pY;
         this.zo = pZ;
+    }
+
+    @Override
+    public boolean hurt(DamageSource pSource, float pAmount) {
+        if (this.isInvulnerableTo(pSource)) {
+            return false;
+        } else if (!this.level().isClientSide && !this.isRemoved()) {
+            this.setHurtDir(-this.getHurtDir());
+            this.setHurtTime(10);
+            if (pSource.getMsgId().equals("lava")) {
+                this.setDamage(this.getDamage() + pAmount * 5.0F);
+            }
+            else {
+                this.setDamage(this.getDamage() + pAmount * 10.0F);
+            }
+            this.markHurt();
+            this.gameEvent(GameEvent.ENTITY_DAMAGE, pSource.getEntity());
+            boolean flag = pSource.getEntity() instanceof Player && ((Player)pSource.getEntity()).getAbilities().instabuild;
+            if (flag || this.getDamage() > 20.0F) {
+                if (!flag && this.level().getGameRules().getBoolean(GameRules.RULE_DOENTITYDROPS)) {
+                    this.destroy(pSource);
+                }
+
+                this.discard();
+            }
+
+            return true;
+        } else {
+            return true;
+        }
     }
 
     @Override

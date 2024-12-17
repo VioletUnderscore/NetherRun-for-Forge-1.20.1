@@ -89,8 +89,8 @@ public class NetherRunScoresData extends SavedData {
         this.spawnX = 0;
         this.spawnY = 0;
         this.spawnZ = 0;
-        this.color1 = 0;
-        this.color2 = 0;
+        this.color1 = 1;
+        this.color2 = 5;
         this.netherRoof = 0;
         this.netherFloor = 128;
         this.gameActive = false;
@@ -128,6 +128,16 @@ public class NetherRunScoresData extends SavedData {
 
     public String getPlayer1Name() { return player1Name; } /*  -  -  -  -  -  -  -  */ public void setPlayer1Name(String player1Name) { this.player1Name = player1Name; setDirty(); }
     public String getPlayer2Name() { return player2Name; } /*  -  -  -  -  -  -  -  */ public void setPlayer2Name(String player2Name) { this.player2Name = player2Name; setDirty(); }
+
+    public int getSpecificTeamColor (int team) {
+        if (team == 1) {
+            return color1;
+        }
+        if (team == 2) {
+            return color2;
+        }
+        return -1;
+    }
 
     @Override
     public CompoundTag save(CompoundTag tag) {

@@ -10,7 +10,7 @@ import net.violetunderscore.netherrun.item.ModItems;
 
 public class PlayerKits {
     private String[] playerKit = {
-            "minecraft:air",
+            "minecraft:white_concrete",
             "minecraft:wooden_sword",
             "minecraft:white_concrete",
             "netherrun:block_of_go_up",
@@ -18,7 +18,7 @@ public class PlayerKits {
             "netherrun:netherrun_pickaxe",
             "netherrun:go_up",
             "netherrun:squished_soul_slime_block",
-            "minecraft:oak_boat",
+            "netherrun:netherrun_boat",
             "netherrun:netherrun_totem"
     };
 

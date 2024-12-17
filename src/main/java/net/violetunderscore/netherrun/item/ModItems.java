@@ -24,9 +24,9 @@ public class ModItems {
 
 
     public static final RegistryObject<Item> NETHERRUN_BOAT = ITEMS.register("netherrun_boat",
-            () -> new NetherRunBoatItem(false, NetherRunBoatEntity.Type.NETHERRUN, new Item.Properties().fireResistant().stacksTo(1)));
+            () -> new NetherRunBoatItem(false, NetherRunBoatEntity.Type.NETHERRUN, new Item.Properties().stacksTo(5)));
     public static final RegistryObject<Item> NETHERRUN_CHEST_BOAT = ITEMS.register("netherrun_chest_boat",
-            () -> new NetherRunBoatItem(true, NetherRunBoatEntity.Type.NETHERRUN, new Item.Properties().fireResistant().stacksTo(1)));
+            () -> new NetherRunBoatItem(true, NetherRunBoatEntity.Type.NETHERRUN, new Item.Properties().stacksTo(5)));
 
 
 

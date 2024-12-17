@@ -25,11 +25,13 @@ import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.network.PacketDistributor;
 import net.violetunderscore.netherrun.NetherRun;
+import net.violetunderscore.netherrun.client.NetherRunGlobalClientData;
 import net.violetunderscore.netherrun.client.NetherRunScoresDisplay;
 import net.violetunderscore.netherrun.commands.NetherRunStart;
 import net.violetunderscore.netherrun.network.NetherrunPlaceBlockPacket;
 import net.violetunderscore.netherrun.network.NetworkHandler;
 import net.violetunderscore.netherrun.network.SyncNetherRunScoresPacket;
+import net.violetunderscore.netherrun.variables.colorEnums;
 import net.violetunderscore.netherrun.variables.global.scores.NetherRunScoresData;
 import net.violetunderscore.netherrun.variables.global.scores.NetherRunScoresDataManager;
 import net.violetunderscore.netherrun.variables.player.kits.PlayerKits;
@@ -83,21 +85,6 @@ public class ModEventBusEvents {
 
 
 
-    //NETHERRUN CAPABILITY
-//    @SubscribeEvent
-//    public static void onAttachCapabilitiesWorld(AttachCapabilitiesEvent<Level> event) {
-//        if (event.getObject().dimension() == Level.OVERWORLD) {
-//            if (!event.getObject().getCapability(NetherRunScoresProvider.NETHERRUN_SCORES).isPresent()) {
-//                LOGGER.info("Attaching NetherRunScores capability to Overworld");
-//                event.addCapability(new ResourceLocation(NetherRun.MODID, "scores"), new NetherRunScoresProvider());
-//            }
-//        }
-//    }
-
-
-
-
-
     // MISCELLANEOUS
     @SubscribeEvent
     public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
@@ -105,39 +92,69 @@ public class ModEventBusEvents {
             ServerLevel overworld = event.player.level().getServer().getLevel(Level.OVERWORLD);
             NetherRunScoresData scoresData = NetherRunScoresDataManager.get(overworld);
             if (scoresData.isGameActive()) {
-                event.player.clearFire();
-                event.player.getFoodData().setFoodLevel(16);
-                event.player.getCapability(PlayerKitsProvider.PLAYER_KITS).ifPresent(kit -> {
-                    if (!event.player.getInventory().offhand.get(0).is(kit.getKitItem(0)) || event.player.getInventory().offhand.get(0).getCount() != event.player.getInventory().offhand.get(0).getMaxStackSize()) {
-                        event.player.getInventory().offhand.set(0, new ItemStack(kit.getKitItem(0), kit.getKitItem(0).getMaxStackSize()));
-                    }
-                    for (int v = 0; v <= 8; v++) {
-                        if (!event.player.getInventory().getItem(v).is(kit.getKitItem(v + 1)) || event.player.getInventory().getItem(v).getCount() != event.player.getInventory().getItem(v).getMaxStackSize()) {
-                            event.player.getInventory().setItem(v, new ItemStack(kit.getKitItem(v + 1), kit.getKitItem(v + 1).getMaxStackSize()));
+                int team = 0;
+                if (Objects.equals(scoresData.getPlayer1Name(), event.player.getName().getString())) {
+                    team = 1;
+                }
+                else if (Objects.equals(scoresData.getPlayer2Name(), event.player.getName().getString()))
+                {
+                    team = 2;
+                }
+                if (team != 0) {
+                    final int teamFinal = team;
+                    /*Nether Bounds*/
+                    {
+                        if (!(scoresData.getNetherFloor() >= scoresData.getNetherRoof())) {
+                            if (event.player.position().y > scoresData.getNetherRoof() - 5) {
+                                event.player.teleportTo(event.player.position().x, scoresData.getNetherRoof() - 10, event.player.position().z);
+                                event.player.sendSystemMessage(Component.literal("The Nether Roof is OFF LIMITS!"));
+                            } else if (event.player.position().y < scoresData.getNetherFloor() + 5) {
+                                event.player.teleportTo(event.player.position().x, scoresData.getNetherFloor() + 10, event.player.position().z);
+                                event.player.sendSystemMessage(Component.literal("The Void is OFF LIMITS!"));
+                            }
                         }
                     }
-                });
-                if (Objects.equals(scoresData.getPlayer1Name(), event.player.getName().getString())) {
-                    if (scoresData.getWhosTurn() == 1) {
-                        supplyPlayer(true, event.player);
+                    event.player.clearFire();
+                    event.player.getFoodData().setFoodLevel(16);
+                    if (event.player.onGround() && !event.player.level().getBlockState(BlockPos.containing(event.player.blockPosition().getX(), event.player.blockPosition().getY() - 1, event.player.blockPosition().getZ())).is(Blocks.LAVA)) {
+                        event.player.getCapability(PlayerKitsProvider.PLAYER_KITS).ifPresent(kit -> {
+                            if (!event.player.getInventory().offhand.get(0).is(kit.getKitItem(0)) || event.player.getInventory().offhand.get(0).getCount() != event.player.getInventory().offhand.get(0).getMaxStackSize()) {
+                                if (kit.getKitItem(0) == Items.WHITE_CONCRETE) {
+                                    event.player.getInventory().offhand.set(0, new ItemStack(colorEnums.NetherRunConcreteColor(scoresData.getSpecificTeamColor(teamFinal)), colorEnums.NetherRunConcreteColor(scoresData.getSpecificTeamColor(teamFinal)).getMaxStackSize()));
+                                } else {
+                                    event.player.getInventory().offhand.set(0, new ItemStack(kit.getKitItem(0), kit.getKitItem(0).getMaxStackSize()));
+                                }
+                            }
+                            for (int v = 0; v <= 8; v++) {
+                                if (!event.player.getInventory().getItem(v).is(kit.getKitItem(v + 1)) || event.player.getInventory().getItem(v).getCount() != event.player.getInventory().getItem(v).getMaxStackSize()) {
+                                    event.player.getInventory().setItem(v, new ItemStack(kit.getKitItem(v + 1), kit.getKitItem(v + 1).getMaxStackSize()));
+                                    if (kit.getKitItem(v + 1) == Items.WHITE_CONCRETE) {
+                                        event.player.getInventory().setItem(v, new ItemStack(colorEnums.NetherRunConcreteColor(scoresData.getSpecificTeamColor(teamFinal)), colorEnums.NetherRunConcreteColor(scoresData.getSpecificTeamColor(teamFinal)).getMaxStackSize()));
+                                    } else {
+                                        event.player.getInventory().setItem(v, new ItemStack(kit.getKitItem(v + 1), kit.getKitItem(v + 1).getMaxStackSize()));
+                                    }
+                                }
+                            }
+                        });
                     }
-                    else {
-                        supplyPlayer(false, event.player);
-                    }
-                }
-                else if (Objects.equals(scoresData.getPlayer2Name(), event.player.getName().getString())) {
-                    if (scoresData.getWhosTurn() == 2) {
-                        supplyPlayer(true, event.player);
-                    }
-                    else {
-                        supplyPlayer(false, event.player);
+                    if (team == 1) {
+                        if (scoresData.getWhosTurn() == 1) {
+                            supplyPlayer(true, event.player);
+                        } else {
+                            supplyPlayer(false, event.player);
+                        }
+                    } else if (team == 2) {
+                        if (scoresData.getWhosTurn() == 2) {
+                            supplyPlayer(true, event.player);
+                        } else {
+                            supplyPlayer(false, event.player);
+                        }
                     }
                 }
             }
         }
 
     }
-
     @SubscribeEvent
     public static void onWorldTick(TickEvent.LevelTickEvent event) {
         if (event.level.dimension() == Level.OVERWORLD && !event.level.isClientSide()) {
@@ -274,20 +291,13 @@ public class ModEventBusEvents {
                                                 scoresData.getSpawnY() + yValue,
                                                 scoresData.getSpawnZ() + zValue
                                         );
-                                        LOGGER.info("Placing block at {} with state {}", pos, pBlockToPlace);
                                         getRunner(scoresData, server).serverLevel().setBlock(pos, pBlockToPlace, 3);
-                                        LOGGER.info("Block placed at {}?", pos);
                                         NetworkHandler.sendToAllPlayers(new NetherrunPlaceBlockPacket(pos, pBlockToPlace), serverLevel.getServer());
                                     }
                                 }
                                 pBlockToPlace = Blocks.AIR.defaultBlockState();
                             }
                             scoresData.setSpawnTimerH(200);
-
-                            BlockPos testPos = new BlockPos(100, 64, 100); // Replace with safe test coordinates
-                            BlockState testBlock = Blocks.DIAMOND_BLOCK.defaultBlockState();
-                            serverLevel.setBlock(testPos, testBlock, 3);
-                            LOGGER.info("Test block placed?");
                         }
                     } else if (scoresData.getSpawnTimerH() != 0) {
                         scoresData.setSpawnTimerH(scoresData.getSpawnTimerH() - 1);
@@ -342,8 +352,12 @@ public class ModEventBusEvents {
         }
     }
 
+
+
+
+
     private static void broadcastMessageToAllPlayers(MinecraftServer server, Component message) {
-        server.getPlayerList().broadcastSystemMessage(message, false); // The 'false' means it's not a system message
+        server.getPlayerList().broadcastSystemMessage(message, false);
     }
 
     private static void specAll(MinecraftServer server) {

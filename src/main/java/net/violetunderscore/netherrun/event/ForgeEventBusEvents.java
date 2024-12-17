@@ -23,7 +23,6 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.violetunderscore.netherrun.NetherRun;
 import net.violetunderscore.netherrun.block.ModBlocks;
-import net.violetunderscore.netherrun.client.NetherRunVersionDisplay;
 import net.violetunderscore.netherrun.item.ModItems;
 import net.violetunderscore.netherrun.network.GoUpParticlePacket;
 import net.violetunderscore.netherrun.network.ItemCooldownPacket;
@@ -77,23 +76,26 @@ public class ForgeEventBusEvents {
             }
         }
         if (event.getEntity() instanceof Player && !totemNegatedDamage) {
-            ServerLevel overworld = event.getEntity().getServer().getLevel(Level.OVERWORLD);
-            NetherRunScoresData scoresData = NetherRunScoresDataManager.get(overworld);
-            if (scoresData.isRoundActive()) {
-                if ((Objects.equals(scoresData.getPlayer1Name(), event.getEntity().getName().getString())
-                        && scoresData.getWhosTurn() == 1)
-                ||
-                        (Objects.equals(scoresData.getPlayer2Name(), event.getEntity().getName().getString())
-                                && scoresData.getWhosTurn() == 2)
-                )  {
-                    if (event.getEntity().getHealth() - event.getAmount() <= 0) {
-                        specAll(event.getEntity().getServer());
-                        scoresData.setRoundJustEnded(true);
-                        scoresData.setRoundActive(false);
-                        event.setCanceled(true);
-                        event.getEntity().setGlowingTag(false);
+            try {
+                ServerLevel overworld = event.getEntity().getServer().getLevel(Level.OVERWORLD);
+                NetherRunScoresData scoresData = NetherRunScoresDataManager.get(overworld);
+                if (scoresData.isRoundActive()) {
+                    if ((Objects.equals(scoresData.getPlayer1Name(), event.getEntity().getName().getString())
+                            && scoresData.getWhosTurn() == 1)
+                            ||
+                            (Objects.equals(scoresData.getPlayer2Name(), event.getEntity().getName().getString())
+                                    && scoresData.getWhosTurn() == 2)
+                    ) {
+                        if (event.getEntity().getHealth() - event.getAmount() <= 0) {
+                            specAll(event.getEntity().getServer());
+                            scoresData.setRoundJustEnded(true);
+                            scoresData.setRoundActive(false);
+                            event.setCanceled(true);
+                            event.getEntity().setGlowingTag(false);
+                        }
                     }
                 }
+            } catch (NullPointerException e) {
             }
         }
     }
@@ -101,17 +103,20 @@ public class ForgeEventBusEvents {
     @SubscribeEvent
     public static void onLivingHurt(LivingHurtEvent event) {
         if (event.getEntity() instanceof Player) {
-            ServerLevel overworld = event.getEntity().getServer().getLevel(Level.OVERWORLD);
-            NetherRunScoresData scoresData = NetherRunScoresDataManager.get(overworld);
-            if (scoresData.isRoundActive()) {
-                if ((Objects.equals(scoresData.getPlayer1Name(), event.getEntity().getName().getString())
+            try {
+                ServerLevel overworld = event.getEntity().getServer().getLevel(Level.OVERWORLD);
+                NetherRunScoresData scoresData = NetherRunScoresDataManager.get(overworld);
+                if (scoresData.isRoundActive()) {
+                    if ((Objects.equals(scoresData.getPlayer1Name(), event.getEntity().getName().getString())
                             && scoresData.getWhosTurn() == 2)
                             ||
                             (Objects.equals(scoresData.getPlayer2Name(), event.getEntity().getName().getString())
                                     && scoresData.getWhosTurn() == 1)
                     ) {
-                    event.setAmount(0);
+                        event.setAmount(0);
+                    }
                 }
+            } catch (NullPointerException e) {
             }
         }
     }

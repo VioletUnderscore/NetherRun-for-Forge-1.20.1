@@ -27,7 +27,7 @@ public class NetherrunTotemItem extends Item {
             pStack.getOrCreateTag().putBoolean("netherrun.ready", true);
             pStack.getOrCreateTag().putInt("CustomModelData", 0);
         }
-        if (pIsSelected) {
+        if (pIsSelected || (pEntity instanceof Player _player && _player.getInventory().offhand.get(0) == pStack)) {
             if (!pLevel.isClientSide()) {
                 if (pLevel instanceof ServerLevel serverLevel) {
                     if (pEntity.isInLava()) {
@@ -67,11 +67,9 @@ public class NetherrunTotemItem extends Item {
                                     }
                                     pBlockToPlace = Blocks.AIR.defaultBlockState();
                                 }
-                                {
-                                    pStack.getOrCreateTag().putBoolean("netherrun.ready", false);
-                                    pStack.getOrCreateTag().putInt("CustomModelData", 1);
-                                    pStack.getOrCreateTag().putLong("netherrun.ready_timeout", pLevel.getGameTime() + 300);
-                                }
+                                pStack.getOrCreateTag().putBoolean("netherrun.ready", false);
+                                pStack.getOrCreateTag().putInt("CustomModelData", 1);
+                                pStack.getOrCreateTag().putLong("netherrun.ready_timeout", pLevel.getGameTime() + 300);
                             }
                         }
 

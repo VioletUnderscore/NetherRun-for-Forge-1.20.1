@@ -1,5 +1,8 @@
 package net.violetunderscore.netherrun.client;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 public class NetherRunGlobalClientData {
     private static int team1Score = 0;
     private static int team2Score = 0;
@@ -158,5 +161,17 @@ public class NetherRunGlobalClientData {
     }
     public static String getPlayer2Name() {
         return player2Name;
+    }
+
+
+
+    public static int getSpecificTeamColor (int team) {
+        if (team == 1) {
+            return color1;
+        }
+        if (team == 2) {
+            return color2;
+        }
+        return -1;
     }
 }
