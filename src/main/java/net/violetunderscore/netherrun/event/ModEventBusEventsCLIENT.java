@@ -3,6 +3,7 @@ package net.violetunderscore.netherrun.event;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.BoatModel;
 import net.minecraft.client.model.ChestBoatModel;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.RegisterGuiOverlaysEvent;
@@ -14,6 +15,8 @@ import net.minecraftforge.client.event.RegisterParticleProvidersEvent;
 import net.violetunderscore.netherrun.client.NetherRunScoresDisplay;
 import net.violetunderscore.netherrun.client.keybinds.NetherRunKeybinds;
 import net.violetunderscore.netherrun.entity.client.ModModelLayers;
+import net.violetunderscore.netherrun.network.NetworkHandler;
+import net.violetunderscore.netherrun.network.playervars.teleportKeyDownPacket;
 import net.violetunderscore.netherrun.particle.ModParticles;
 import net.violetunderscore.netherrun.particle.custom.GoUpParticles;
 import net.violetunderscore.netherrun.particle.custom.GoUpPlacedParticles;
@@ -32,18 +35,18 @@ public class ModEventBusEventsCLIENT {
         if (event.phase == TickEvent.Phase.END) {
             Minecraft minecraft = Minecraft.getInstance();
             if (minecraft.player != null) {
-                if (NetherRunKeybinds.NETHERRUN_TELEPORT.isDown()) {
-                    minecraft.player.getCapability(PlayerKitsProvider.PLAYER_KITS).ifPresent(kit -> {
-                        kit.setKeyDown(true);
-                    });
-                }
-                else {
-                    minecraft.player.getCapability(PlayerKitsProvider.PLAYER_KITS).ifPresent(kit -> {
-                        kit.setKeyDown(false);
-                    });
-                }
+                boolean isKeyDown = NetherRunKeybinds.NETHERRUN_TELEPORT.isDown();
+
+                minecraft.player.getCapability(PlayerKitsProvider.PLAYER_KITS).ifPresent(kit -> {
+                    if (kit.getKeyDown() != isKeyDown) {
+                        kit.setKeyDown(isKeyDown);
+
+                        NetworkHandler.INSTANCE.sendToServer(new teleportKeyDownPacket(isKeyDown));
+                    }
+                });
             }
         }
     }
 
+    {}{}{}
 }

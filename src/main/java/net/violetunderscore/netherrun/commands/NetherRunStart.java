@@ -9,6 +9,7 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
@@ -269,19 +270,19 @@ public class NetherRunStart {
                 if (Objects.equals(scoresData.getPlayer1Name(), context.getSource().getEntity().getName().getString())) {
                     scoresData.setTeam1Ready(!scoresData.isTeam1Ready());
                     if (scoresData.isTeam1Ready()) {
-                        context.getSource().sendSuccess(() -> Component.literal("You are ready!"), false);
+                        broadcastMessageToAllPlayers(context.getSource().getServer(), Component.literal(context.getSource().getEntity().getName().getString() + " is ready!").withStyle(ChatFormatting.GREEN));
                         return 1;
                     }
-                    context.getSource().sendSuccess(() -> Component.literal("You are not ready!"), false);
+                    broadcastMessageToAllPlayers(context.getSource().getServer(), Component.literal(context.getSource().getEntity().getName().getString() + " is not ready.").withStyle(ChatFormatting.RED));
                     return 1;
                 }
                 else if (Objects.equals(scoresData.getPlayer2Name(), context.getSource().getEntity().getName().getString())) {
                     scoresData.setTeam2Ready(!scoresData.isTeam2Ready());
                     if (scoresData.isTeam2Ready()) {
-                        context.getSource().sendSuccess(() -> Component.literal("You are ready!"), false);
+                        broadcastMessageToAllPlayers(context.getSource().getServer(), Component.literal(context.getSource().getEntity().getName().getString() + " is ready!").withStyle(ChatFormatting.GREEN));
                         return 1;
                     }
-                    context.getSource().sendSuccess(() -> Component.literal("You are not ready!"), false);
+                    broadcastMessageToAllPlayers(context.getSource().getServer(), Component.literal(context.getSource().getEntity().getName().getString() + " is not ready.").withStyle(ChatFormatting.RED));
                     return 1;
                 }
                 else {
@@ -416,6 +417,9 @@ public class NetherRunStart {
             // Set each player to Spectator Mode
             player.setGameMode(GameType.SPECTATOR);
         }
+    }
+    private static void broadcastMessageToAllPlayers(MinecraftServer server, Component message) {
+        server.getPlayerList().broadcastSystemMessage(message, false);
     }
 }
 

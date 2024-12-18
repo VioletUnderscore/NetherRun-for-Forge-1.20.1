@@ -1,5 +1,6 @@
 package net.violetunderscore.netherrun.event;
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -27,6 +28,8 @@ import net.violetunderscore.netherrun.NetherRun;
 import net.violetunderscore.netherrun.network.NetherrunPlaceBlockPacket;
 import net.violetunderscore.netherrun.network.NetworkHandler;
 import net.violetunderscore.netherrun.network.SyncNetherRunScoresPacket;
+import net.violetunderscore.netherrun.network.playervars.PVarSTCPacket;
+import net.violetunderscore.netherrun.network.playervars.teleportKeyDownPacket;
 import net.violetunderscore.netherrun.variables.colorEnums;
 import net.violetunderscore.netherrun.variables.global.scores.NetherRunScoresData;
 import net.violetunderscore.netherrun.variables.global.scores.NetherRunScoresDataManager;
@@ -144,6 +147,7 @@ public class ModEventBusEvents {
                                     if (kit.isWarping() && kit.getWarpTime() == 0) {
                                         kit.setWarping(false);
                                         event.player.teleportTo(kit.getWarpSpace().x, kit.getWarpSpace().y, kit.getWarpSpace().z);
+                                        getHunter(scoresData, event.player.getServer()).setGameMode(GameType.SURVIVAL);
                                         BlockState pBlockToPlace = Blocks.CRYING_OBSIDIAN.defaultBlockState();
                                         for (int yValue = -1; yValue <= 3; yValue += 1) {
                                             if (yValue == 3) {
@@ -166,11 +170,35 @@ public class ModEventBusEvents {
                                     if (kit.getWarpTime() != 0) {
                                         kit.setWarpTimer(kit.getWarpTime() - 1);
                                     }
-                                    kit.setCanWarp(Math.max(Math.abs(runner.position().x - event.player.position().x), Math.abs(runner.position().z - event.player.position().z)) > 50 || Math.abs(runner.position().y - event.player.position().y) > 50);
+                                    kit.setCanWarp((Math.max(Math.abs(runner.position().x - event.player.position().x), Math.abs(runner.position().z - event.player.position().z)) > 50 || Math.abs(runner.position().y - event.player.position().y) > 50)
+                                            && (scoresData.getSpawnTimerR() == 0 && scoresData.getSpawnTimerH() == 0 && scoresData.isRoundActive()));
                                     if (kit.getCanWarp() && kit.getKeyDown() && kit.getWarpTime() == 0) {
                                         kit.setWarp((int) Math.floor(runner.position().x), (int) Math.floor(runner.position().y), (int) Math.floor(runner.position().z), 120);
                                         kit.setWarping(true);
+                                        getHunter(scoresData, event.player.getServer()).setGameMode(GameType.SPECTATOR);
+                                        event.player.teleportTo(runner.position().x, runner.position().y, runner.position().z);
+                                        BlockState pBlockToPlace = Blocks.MAGENTA_STAINED_GLASS.defaultBlockState();
+                                        for (int yValue = -1; yValue <= 3; yValue += 1) {
+                                            if (yValue == 3) {
+                                                pBlockToPlace = Blocks.MAGENTA_STAINED_GLASS.defaultBlockState();
+                                            }
+                                            for (int xValue = -1; xValue <= 1; xValue += 1) {
+                                                for (int zValue = -1; zValue <= 1; zValue += 1) {
+                                                    BlockPos pos = BlockPos.containing(
+                                                            kit.getWarpSpace().x + xValue,
+                                                            kit.getWarpSpace().y + yValue,
+                                                            kit.getWarpSpace().z + zValue
+                                                    );
+                                                    NetworkHandler.sendTargeted(new NetherrunPlaceBlockPacket(pos, pBlockToPlace), (ServerPlayer) event.player);
+                                                }
+                                            }
+                                            pBlockToPlace = Blocks.AIR.defaultBlockState();
+                                        }
+                                        broadcastMessageToAllPlayers(event.player.getServer(), Component.literal((event.player.getName().getString() + " has fallen behind!")).withStyle(ChatFormatting.RED, ChatFormatting.BOLD));
+                                        broadcastMessageToAllPlayers(event.player.getServer(), Component.literal("They are now being teleported...").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
                                     }
+                                    NetworkHandler.sendTargeted(new PVarSTCPacket(kit.getCanWarp(), kit.isWarping(), kit.getWarpTime()), (ServerPlayer) event.player);
+                                    LOGGER.info("Can Warp: " + kit.getCanWarp() + ", Button Down: " + kit.getKeyDown() + ", Get Warp Time: " + kit.getWarpTime());
                                 });
                             } catch (NullPointerException e) {
                                 LOGGER.error("Failed to check hunter warp status");
@@ -187,6 +215,7 @@ public class ModEventBusEvents {
                                     if (kit.isWarping() && kit.getWarpTime() == 0) {
                                         kit.setWarping(false);
                                         event.player.teleportTo(kit.getWarpSpace().x, kit.getWarpSpace().y, kit.getWarpSpace().z);
+                                        getHunter(scoresData, event.player.getServer()).setGameMode(GameType.SURVIVAL);
                                         BlockState pBlockToPlace = Blocks.CRYING_OBSIDIAN.defaultBlockState();
                                         for (int yValue = -1; yValue <= 3; yValue += 1) {
                                             if (yValue == 3) {
@@ -209,14 +238,38 @@ public class ModEventBusEvents {
                                     if (kit.getWarpTime() != 0) {
                                         kit.setWarpTimer(kit.getWarpTime() - 1);
                                     }
-                                    kit.setCanWarp(Math.max(Math.abs(runner.position().x - event.player.position().x), Math.abs(runner.position().z - event.player.position().z)) > 50 || Math.abs(runner.position().y - event.player.position().y) > 50);
+                                    kit.setCanWarp((Math.max(Math.abs(runner.position().x - event.player.position().x), Math.abs(runner.position().z - event.player.position().z)) > 50 || Math.abs(runner.position().y - event.player.position().y) > 50)
+                                            && (scoresData.getSpawnTimerR() == 0 && scoresData.getSpawnTimerH() == 0 && scoresData.isRoundActive()));
                                     if (kit.getCanWarp() && kit.getKeyDown() && kit.getWarpTime() == 0) {
                                         kit.setWarp((int) Math.floor(runner.position().x), (int) Math.floor(runner.position().y), (int) Math.floor(runner.position().z), 120);
                                         kit.setWarping(true);
+                                        getHunter(scoresData, event.player.getServer()).setGameMode(GameType.SPECTATOR);
+                                        event.player.teleportTo(runner.position().x, runner.position().y, runner.position().z);
+                                        BlockState pBlockToPlace = Blocks.MAGENTA_STAINED_GLASS.defaultBlockState();
+                                        for (int yValue = -1; yValue <= 3; yValue += 1) {
+                                            if (yValue == 3) {
+                                                pBlockToPlace = Blocks.MAGENTA_STAINED_GLASS.defaultBlockState();
+                                            }
+                                            for (int xValue = -1; xValue <= 1; xValue += 1) {
+                                                for (int zValue = -1; zValue <= 1; zValue += 1) {
+                                                    BlockPos pos = BlockPos.containing(
+                                                            kit.getWarpSpace().x + xValue,
+                                                            kit.getWarpSpace().y + yValue,
+                                                            kit.getWarpSpace().z + zValue
+                                                    );
+                                                    NetworkHandler.sendTargeted(new NetherrunPlaceBlockPacket(pos, pBlockToPlace), (ServerPlayer) event.player);
+                                                }
+                                            }
+                                            pBlockToPlace = Blocks.AIR.defaultBlockState();
+                                        }
+                                        broadcastMessageToAllPlayers(event.player.getServer(), Component.literal((event.player.getName().getString() + " has fallen behind!")).withStyle(ChatFormatting.RED, ChatFormatting.BOLD));
+                                        broadcastMessageToAllPlayers(event.player.getServer(), Component.literal("They are now being teleported...").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
                                     }
+                                    NetworkHandler.sendTargeted(new PVarSTCPacket(kit.getCanWarp(), kit.isWarping(), kit.getWarpTime()), (ServerPlayer) event.player);
+                                    //LOGGER.info("Can Warp: " + kit.getCanWarp() + ", Button Down: " + kit.getKeyDown() + ", Get Warp Time: " + kit.getWarpTime());
                                 });
                             } catch (NullPointerException e) {
-                                LOGGER.error("Failed to check hunter warp status");
+                                //LOGGER.error("Failed to check hunter warp status");
                             }
                         }
                     }
@@ -367,6 +420,12 @@ public class ModEventBusEvents {
                                 }
                                 pBlockToPlace = Blocks.AIR.defaultBlockState();
                             }
+                            getHunter(scoresData, server).setGameMode(GameType.SPECTATOR);
+                            getHunter(scoresData, server).teleportTo(
+                                    scoresData.getSpawnX(),
+                                    scoresData.getSpawnY(),
+                                    scoresData.getSpawnZ()
+                            );
                             scoresData.setSpawnTimerH(200);
                         }
                     } else if (scoresData.getSpawnTimerH() != 0) {

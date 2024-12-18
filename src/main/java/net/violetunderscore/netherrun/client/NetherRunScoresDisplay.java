@@ -18,10 +18,14 @@ import net.violetunderscore.netherrun.variables.colorEnums;
 import net.violetunderscore.netherrun.variables.global.scores.NetherRunScoresData;
 import net.violetunderscore.netherrun.variables.global.scores.NetherRunScoresDataManager;
 import net.violetunderscore.netherrun.variables.player.kits.PlayerKitsProvider;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.Objects;
 
 public class NetherRunScoresDisplay {
+    private static final Logger LOGGER = LogManager.getLogger();
+
     private static final ResourceLocation NR_SCORE_BACKDROP = new ResourceLocation(NetherRun.MODID,
             "textures/gui/scores_display.png");
     private static final ResourceLocation NR_ICONS = new ResourceLocation(NetherRun.MODID,
@@ -35,6 +39,15 @@ public class NetherRunScoresDisplay {
         int y = height;
 
         Player player = Minecraft.getInstance().player;
+
+        if (NetherRunGlobalClientData.isGameActive() && NetherRunGlobalClientData.getSpawnTimerR() != 0)
+        {
+            guiGraphics.drawCenteredString(Minecraft.getInstance().font, ("Spawning the runner in " + (int)Math.ceil(((double)NetherRunGlobalClientData.getSpawnTimerR()) / 40) + " seconds!"), x, 50, 0xFFFFFF);
+        } else if (NetherRunGlobalClientData.isGameActive() && NetherRunGlobalClientData.getSpawnTimerH() != 0)
+        {
+            guiGraphics.drawCenteredString(Minecraft.getInstance().font, ("Spawning the hunter in " + (int)Math.ceil(((double)NetherRunGlobalClientData.getSpawnTimerH()) / 40) + " seconds!"), x, 50, 0xFFFFFF);
+        }
+
         if (player != null) {
             /*Slot Related Stuff*/{
                 boolean slotcd = false;
@@ -108,10 +121,11 @@ public class NetherRunScoresDisplay {
                         }
                         else if (kit.getCanWarp()) {
                             guiGraphics.drawCenteredString(Minecraft.getInstance().font, ("You're falling behind!"), finalX, finalY - 55, 0xFFFFFF);
-                            guiGraphics.drawCenteredString(Minecraft.getInstance().font, ("Press [" + NetherRunKeybinds.NETHERRUN_TELEPORT.getTranslatedKeyMessage() + "] to warp back to the runner"), finalX, finalY - 45, 0xFFFFFF);
+                            guiGraphics.drawCenteredString(Minecraft.getInstance().font, ("Press [" + NetherRunKeybinds.NETHERRUN_TELEPORT.getTranslatedKeyMessage().getString() + "] to warp back to the runner"), finalX, finalY - 45, 0xFFFFFF);
                         }
                     });
                 } catch (NullPointerException e) {
+                    LOGGER.info("null while placing text");
                 }
             }
         }
