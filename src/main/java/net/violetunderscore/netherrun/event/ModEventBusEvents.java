@@ -368,10 +368,10 @@ public class ModEventBusEvents {
                                 broadcastMessageToAllPlayers(event.level.getServer(), Component.literal(
                                         "HOW TF DID YOU GET THE EXACT SAME TIME?"));
                         }
-                        broadcastMessageToAllPlayers(event.level.getServer(), Component.literal(
-                                "Starting Round " + (scoresData.getRound()) + "..."));
                     }
                     if (scoresData.isGameActive()) {
+                        broadcastMessageToAllPlayers(event.level.getServer(), Component.literal(
+                                "Starting Round " + (scoresData.getRound()) + "..."));
                         if (scoresData.getWhosTurn() == 1) {
                             broadcastMessageToAllPlayers(event.level.getServer(), Component.literal(
                                     "Your turn, " + (scoresData.getPlayer1Name()) + "!"));
