@@ -133,7 +133,7 @@ public class ForgeEventBusEvents {
                 event.getPlacedBlock().setValue(PLAYER_PLACED, true);
                 event.getPlacedBlock().setValue(LIFETIME, 12);
                 if (!pPlayer.isCreative()) {
-                    pPlayer.getCooldowns().addCooldown(ModBlocks.GO_UP.get().asItem(), 15);
+                    pPlayer.getCooldowns().addCooldown(ModBlocks.GO_UP.get().asItem(), 20);
                 }
                 //LOGGER.info("NETHERRUN: If statement is working");
                 for (int i = 0; i < 15; i++) {
@@ -151,7 +151,7 @@ public class ForgeEventBusEvents {
                     ), event.getLevel().getServer(), 32);
                 }
             } else if (event.getPlacedBlock().is(ModBlocks.BLOCK_OF_GO_UP.get()) && !pPlayer.isCreative()) {
-                pPlayer.getCooldowns().addCooldown(ModBlocks.BLOCK_OF_GO_UP.get().asItem(), 300);
+                pPlayer.getCooldowns().addCooldown(ModBlocks.BLOCK_OF_GO_UP.get().asItem(), 20 * 20);
             }
         }
     }

@@ -143,6 +143,14 @@ public class ModEventBusEvents {
                     if (team == 1) {
                         if (scoresData.getWhosTurn() == 1) {
                             supplyPlayer(true, event.player);
+                            try {
+                                event.player.getCapability(PlayerKitsProvider.PLAYER_KITS).ifPresent(kit -> {
+                                    kit.setCanWarp(false);
+                                    NetworkHandler.sendTargeted(new PVarSTCPacket(kit.getCanWarp(), kit.isWarping(), kit.getWarpTime()), (ServerPlayer) event.player);
+                                });
+                            } catch (NullPointerException e) {
+
+                            }
                         } else {
                             supplyPlayer(false, event.player);
                             try {
@@ -211,6 +219,14 @@ public class ModEventBusEvents {
                     } else if (team == 2) {
                         if (scoresData.getWhosTurn() == 2) {
                             supplyPlayer(true, event.player);
+                            try {
+                                event.player.getCapability(PlayerKitsProvider.PLAYER_KITS).ifPresent(kit -> {
+                                    kit.setCanWarp(false);
+                                    NetworkHandler.sendTargeted(new PVarSTCPacket(kit.getCanWarp(), kit.isWarping(), kit.getWarpTime()), (ServerPlayer) event.player);
+                                });
+                            } catch (NullPointerException e) {
+
+                            }
                         } else {
                             supplyPlayer(false, event.player);
                             try {

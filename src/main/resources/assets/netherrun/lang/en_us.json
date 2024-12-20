@@ -12,5 +12,8 @@
 
   "entity.netherrun.netherrun_chest_boat": "Boat with Chest",
 
-  "creativetab.netherrun_tab": "Nether Run"
+  "key.netherrun.teleport": "Teleport As Hunter",
+  "key.categories.netherrun": "NetherRun",
+
+  "creativetab.netherrun_tab": "NetherRun"
 }

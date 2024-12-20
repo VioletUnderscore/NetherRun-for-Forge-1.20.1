@@ -69,7 +69,7 @@ public class NetherrunTotemItem extends Item {
                                 }
                                 pStack.getOrCreateTag().putBoolean("netherrun.ready", false);
                                 pStack.getOrCreateTag().putInt("CustomModelData", 1);
-                                pStack.getOrCreateTag().putLong("netherrun.ready_timeout", pLevel.getGameTime() + 300);
+                                pStack.getOrCreateTag().putLong("netherrun.ready_timeout", pLevel.getGameTime() + 20 * 20);
                             }
                         }
 

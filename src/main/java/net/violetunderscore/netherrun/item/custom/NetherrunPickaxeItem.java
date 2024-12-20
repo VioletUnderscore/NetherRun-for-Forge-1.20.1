@@ -52,7 +52,7 @@ public class NetherrunPickaxeItem extends PickaxeItem {
             pPlayer.getMainHandItem().getTag().putBoolean("netherrun.ready", false);
             pPlayer.getMainHandItem().getTag().putInt("CustomModelData", 1);
             pPlayer.getMainHandItem().getTag().putLong("netherrun.timeout", pLevel.getGameTime() + 100);
-            pPlayer.getMainHandItem().getTag().putLong("netherrun.ready_timeout", pLevel.getGameTime() + 600);
+            pPlayer.getMainHandItem().getTag().putLong("netherrun.ready_timeout", pLevel.getGameTime() + 30 * 20);
         }
         return super.use(pLevel, pPlayer, pUsedHand);
     }
