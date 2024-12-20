@@ -9,14 +9,17 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.client.event.ScreenEvent;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
+import net.minecraftforge.event.entity.player.PlayerContainerEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -75,7 +78,7 @@ public class ForgeEventBusEvents {
                 }
             }
         }
-        if (event.getEntity() instanceof Player && !totemNegatedDamage) {
+        if (event.getEntity() instanceof Player && !totemNegatedDamage && !event.getEntity().isInvulnerable()) {
             try {
                 ServerLevel overworld = event.getEntity().getServer().getLevel(Level.OVERWORLD);
                 NetherRunScoresData scoresData = NetherRunScoresDataManager.get(overworld);
@@ -157,6 +160,21 @@ public class ForgeEventBusEvents {
 //    public static void onDeath (LivingDeathEvent event) {
 //
 //    }
+
+    @SubscribeEvent
+    public static void itemTossEvent(ItemTossEvent event) {
+        try {
+            ServerLevel overworld = event.getEntity().getServer().getLevel(Level.OVERWORLD);
+            NetherRunScoresData scoresData = NetherRunScoresDataManager.get(overworld);
+            if (scoresData.isGameActive()) {
+                ItemStack itemStack = event.getEntity().getItem();
+                event.setCanceled(true);
+                event.getPlayer().getInventory().setItem(event.getPlayer().getInventory().selected, itemStack);
+            }
+        } catch (NullPointerException e) {
+
+        }
+    }
 
     private static void specAll(MinecraftServer server) {
         for (ServerPlayer player : server.getPlayerList().getPlayers()) {

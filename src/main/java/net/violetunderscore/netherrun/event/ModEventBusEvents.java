@@ -25,6 +25,7 @@ import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.network.PacketDistributor;
 import net.violetunderscore.netherrun.NetherRun;
+import net.violetunderscore.netherrun.item.ModItems;
 import net.violetunderscore.netherrun.network.NetherrunPlaceBlockPacket;
 import net.violetunderscore.netherrun.network.NetworkHandler;
 import net.violetunderscore.netherrun.network.SyncNetherRunScoresPacket;
@@ -133,6 +134,9 @@ public class ModEventBusEvents {
                                         event.player.getInventory().setItem(v, new ItemStack(kit.getKitItem(v + 1), kit.getKitItem(v + 1).getMaxStackSize()));
                                     }
                                 }
+                            }
+                            for(int v = 9; v <= 35; v++) {
+                                event.player.getInventory().setItem(v, new ItemStack(Items.AIR));
                             }
                         });
                     }
