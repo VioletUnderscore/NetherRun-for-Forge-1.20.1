@@ -130,11 +130,11 @@ public class NetherRunScoresDisplay {
                 try {
                     player.getCapability(PlayerKitsProvider.PLAYER_KITS).ifPresent(kit -> {
                         if (kit.isWarping()) {
-                            guiGraphics.drawCenteredString(Minecraft.getInstance().font, ("Warping in " + (int) Math.ceil((double) kit.getWarpTime() / 40) + " seconds"), finalX, finalY - 45, 0xFFFFFF);
+                            guiGraphics.drawCenteredString(Minecraft.getInstance().font, ("Warping in " + (int) Math.ceil((double) kit.getWarpTime() / 40) + " seconds"), finalX, finalY - 15, 0xFFFFFF);
                         }
                         else if (kit.getCanWarp()) {
-                            guiGraphics.drawCenteredString(Minecraft.getInstance().font, ("You're falling behind!"), finalX, finalY - 55, 0xFFFFFF);
-                            guiGraphics.drawCenteredString(Minecraft.getInstance().font, ("Press [" + NetherRunKeybinds.NETHERRUN_TELEPORT.getTranslatedKeyMessage().getString() + "] to warp back to the runner"), finalX, finalY - 45, 0xFFFFFF);
+                            guiGraphics.drawCenteredString(Minecraft.getInstance().font, ("You're falling behind!"), finalX, finalY - 75, 0xFFFFFF);
+                            guiGraphics.drawCenteredString(Minecraft.getInstance().font, ("Press [" + NetherRunKeybinds.NETHERRUN_TELEPORT.getTranslatedKeyMessage().getString() + "] to warp back to the runner"), finalX, finalY - 65, 0xFFFFFF);
                         }
                     });
                 } catch (NullPointerException e) {
