@@ -1,20 +1,27 @@
 package net.violetunderscore.netherrun.event;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.PauseScreen;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.EntityEvent;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.vehicle.Boat;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.client.event.RenderGuiOverlayEvent;
 import net.minecraftforge.client.event.ScreenEvent;
+import net.minecraftforge.client.gui.overlay.GuiOverlayManager;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.EntityMountEvent;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
@@ -47,6 +54,8 @@ import static net.violetunderscore.netherrun.block.custom.GoUpBlock.*;
 public class ForgeEventBusEvents {
 
     private static final Logger LOGGER = LogManager.getLogger();
+
+    private static final ResourceLocation CROSSHAIR = new ResourceLocation("minecraft", "crosshair");
 
 //    private static LazyOptional<INetherRunData> getGlobalData(Level level) {
 //        if (level.getServer() != null) {
@@ -93,6 +102,8 @@ public class ForgeEventBusEvents {
                             specAll(event.getEntity().getServer());
                             scoresData.setRoundJustEnded(true);
                             scoresData.setRoundActive(false);
+                            scoresData.setSpawnTimerR(0);
+                            scoresData.setSpawnTimerH(0);
                             event.setCanceled(true);
                             event.getEntity().setGlowingTag(false);
                         }
@@ -133,7 +144,7 @@ public class ForgeEventBusEvents {
                 event.getPlacedBlock().setValue(PLAYER_PLACED, true);
                 event.getPlacedBlock().setValue(LIFETIME, 12);
                 if (!pPlayer.isCreative()) {
-                    pPlayer.getCooldowns().addCooldown(ModBlocks.GO_UP.get().asItem(), 20);
+                    pPlayer.getCooldowns().addCooldown(ModBlocks.GO_UP.get().asItem(), 25);
                 }
                 //LOGGER.info("NETHERRUN: If statement is working");
                 for (int i = 0; i < 15; i++) {
@@ -173,6 +184,27 @@ public class ForgeEventBusEvents {
             }
         } catch (NullPointerException e) {
 
+        }
+    }
+
+    @SubscribeEvent
+    public static void onMount(EntityMountEvent event) {
+        if (event.getEntityMounting() instanceof  Player && event.getEntityBeingMounted() instanceof Boat) {
+            Player player = (Player) event.getEntityMounting();
+            if (event.isMounting()) {
+                player.getCooldowns().addCooldown(ModItems.NETHERRUN_BOAT.get(), 50);
+            }
+            else {
+                player.getCooldowns().removeCooldown(ModItems.NETHERRUN_BOAT.get());
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public static void onRenderHud(RenderGuiOverlayEvent.Pre event) {
+        Player player = Minecraft.getInstance().player;
+        if (player.getCooldowns().isOnCooldown(player.getInventory().getItem(player.getInventory().selected).getItem()) && event.getOverlay().id().equals(CROSSHAIR)) {
+            event.setCanceled(true);
         }
     }
 

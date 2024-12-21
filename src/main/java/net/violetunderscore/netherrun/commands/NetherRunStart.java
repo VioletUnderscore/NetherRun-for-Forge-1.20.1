@@ -128,12 +128,14 @@ public class NetherRunStart {
                     .then(Commands.literal("color"));
 
             for (colorEnums.NetherRunColors color : colorEnums.NetherRunColors.values()) {
-                netherrunCommand.then(
-                        Commands.literal("color")
-                                .then(Commands.literal(color.getName())
-                                                .executes(context -> executeColorChange(context, color.getId()))
-                                )
-                );
+                if (color.getId() != 0) {
+                    netherrunCommand.then(
+                            Commands.literal("color")
+                                    .then(Commands.literal(color.getName())
+                                            .executes(context -> executeColorChange(context, color.getId()))
+                                    )
+                    );
+                }
             }
 
             dispatcher.register(netherrunCommand);

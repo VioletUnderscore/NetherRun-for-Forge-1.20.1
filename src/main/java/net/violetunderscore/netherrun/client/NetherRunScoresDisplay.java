@@ -34,6 +34,15 @@ public class NetherRunScoresDisplay {
             "textures/gui/hotbar_cooldown.png");
     private static final ResourceLocation NR_CD_SLOT_SELECT = new ResourceLocation(NetherRun.MODID,
             "textures/gui/hotbar_selection_cooldown.png");
+    private static final ResourceLocation MINECRAFT_SLOT_SELECT = new ResourceLocation("from_minecraft",
+            "hotbar_selection.png");
+    private static final ResourceLocation X_ICON = new ResourceLocation("from_minecraft",
+            "reject.png");
+
+
+
+
+
     public static final IGuiOverlay HUD_NR_SCORE_DISPLAY = ((gui, guiGraphics, partialTick, width, height) -> {
         int x = width / 2;
         int y = height;
@@ -97,6 +106,7 @@ public class NetherRunScoresDisplay {
                     if (player.getCooldowns().isOnCooldown(player.getInventory().getItem(slot).getItem())) {
                         guiGraphics.blit(NR_CD_SLOT_SELECT, x - 92 + (slot * 20), y - 23, 0, 0, 24, 24, 24, 24);
                         guiGraphics.drawString(Minecraft.getInstance().font, ((int) Math.abs(Math.ceil(player.getCooldowns().getCooldownPercent(player.getInventory().getItem(slot).getItem(), partialTick) * 100 - 100)) + "%"), x - 89 + (slot * 20), y - 32, 0xFFFFFF);
+                        guiGraphics.blit(X_ICON, width / 2 - 9, height / 2 - 9, 0, 0, 18, 18, 18, 18);
                     } else try {
                         if (player.getInventory().getItem(slot).getTag().getLong("netherrun.ready_timeout") - player.level().getGameTime() > 0) {
                             guiGraphics.blit(NR_CD_SLOT_SELECT, x - 92 + (slot * 20), y - 23, 0, 0, 24, 24, 24, 24);
@@ -106,6 +116,9 @@ public class NetherRunScoresDisplay {
                         guiGraphics.drawString(Minecraft.getInstance().font, "ERR", x - 89 + (slot * 20), y - 32, 0xFF0000);
                     }
 
+                }
+                else {
+                    guiGraphics.blit(MINECRAFT_SLOT_SELECT, x - 92 + (player.getInventory().selected * 20), y - 23, 0, 0, 24, 23, 24, 23);
                 }
             }
         }
@@ -129,7 +142,6 @@ public class NetherRunScoresDisplay {
                 }
             }
         }
-
         /*Scoreboard Related Stuff*/{
             if (NetherRunGlobalClientData.isGameActive()) {
                 x = 90;

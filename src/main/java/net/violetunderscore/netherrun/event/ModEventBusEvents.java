@@ -374,11 +374,11 @@ public class ModEventBusEvents {
                         if (Math.max(scoresData.getTeam1Score(), scoresData.getTeam2Score()) > scoresData.getTargetScore()) {
                             if (scoresData.getTeam1Score() > scoresData.getTeam2Score()) {
                                 broadcastMessageToAllPlayers(event.level.getServer(), Component.literal(
-                                        "Team 1 Wins the game!"));
+                                        scoresData.getPlayer1Name() + "Wins the game!"));
                                 scoresData.setGameActive(false);
                             } else if (scoresData.getTeam1Score() < scoresData.getTeam2Score()) {
                                 broadcastMessageToAllPlayers(event.level.getServer(), Component.literal(
-                                        "Team 2 Wins the game!"));
+                                        scoresData.getPlayer2Name() + "Wins the game!"));
                                 scoresData.setGameActive(false);
                             } else
                                 broadcastMessageToAllPlayers(event.level.getServer(), Component.literal(
@@ -490,7 +490,7 @@ public class ModEventBusEvents {
                 }
                 else if (scoresData.isTeam1Ready() && scoresData.isTeam2Ready()) {
                     scoresData.setRoundActive(true);
-                    scoresData.setSpawnTimerR(600);
+                    scoresData.setSpawnTimerR(10 * 40);
                     teleAll(server, new Vec3(new Random().nextInt(20000) - 10000, 100, new Random().nextInt(20000) - 10000)); /* not working??? */
                     specAll(server);
                     //mark hunter as hunter and runner as runner
