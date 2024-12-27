@@ -56,30 +56,13 @@ public class ModEventBusEvents {
 
 
 
-    //PLAYER CAPABILITY
-    @SubscribeEvent
-    public static void onAttachCapabilitiesPlayer(AttachCapabilitiesEvent<Entity> event) {
-        if(event.getObject() instanceof Player) {
-            if(!event.getObject().getCapability(PlayerKitsProvider.PLAYER_KITS).isPresent()) {
-                event.addCapability(new ResourceLocation(NetherRun.MODID, "properties"), new PlayerKitsProvider());
-            }
-        }
-    }
 
 
 
 
 
-    @SubscribeEvent
-    public static void onPlayerCloned(PlayerEvent.Clone event) {
-        if (event.isWasDeath()) {
-            event.getOriginal().getCapability(PlayerKitsProvider.PLAYER_KITS).ifPresent(oldStore -> {
-                event.getOriginal().getCapability(PlayerKitsProvider.PLAYER_KITS).ifPresent(newStore -> {
-                    newStore.copyFrom(oldStore);
-                });
-            });
-        }
-    }
+
+
 
 
 
@@ -329,6 +312,7 @@ public class ModEventBusEvents {
                                 scoresData.isTeam1Ready(),
                                 scoresData.isTeam2Ready(),
                                 scoresData.isRoundJustEnded(),
+                                scoresData.isGamePaused(),
                                 scoresData.getPlayer1Name(),
                                 scoresData.getPlayer2Name()
                         ));
@@ -363,7 +347,7 @@ public class ModEventBusEvents {
 //                    );
 
 
-            if (scoresData.isGameActive()) {
+            if (scoresData.isGameActive() && !scoresData.isGamePaused()) {
                 if (scoresData.isRoundJustEnded()) {
                     scoresData.setWhosTurn(scoresData.getWhosTurn() + 1);
                     if (scoresData.getWhosTurn() > 2) {

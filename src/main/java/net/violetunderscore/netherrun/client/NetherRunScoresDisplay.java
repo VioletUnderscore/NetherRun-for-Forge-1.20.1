@@ -57,7 +57,7 @@ public class NetherRunScoresDisplay {
             guiGraphics.drawCenteredString(Minecraft.getInstance().font, ("Spawning the hunter in " + (int)Math.ceil(((double)NetherRunGlobalClientData.getSpawnTimerH()) / 40) + " seconds!"), x, 50, 0xFFFFFF);
         }
 
-        if (player != null) {
+        if (player != null && !player.isSpectator()) {
             /*Slot Related Stuff*/{
                 boolean slotcd = false;
                 int slot = 0;

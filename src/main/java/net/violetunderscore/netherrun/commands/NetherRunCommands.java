@@ -26,7 +26,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.Objects;
 
-public class NetherRunStart {
+public class NetherRunCommands {
     public static final Logger LOGGER = LogManager.getLogger();
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         /*start*/{
@@ -37,7 +37,7 @@ public class NetherRunStart {
                                             .then(Commands.argument("player2", EntityArgument.player())
                                                     .then(Commands.argument("Game Length", IntegerArgumentType.integer())
                                                             .then(Commands.literal("minutes")
-                                                                    .executes(NetherRunStart::executeStartInMinutes)
+                                                                    .executes(NetherRunCommands::executeStartInMinutes)
                                                             )
                                                     )
                                             )
@@ -51,7 +51,7 @@ public class NetherRunStart {
                                             .then(Commands.argument("player2", EntityArgument.player())
                                                     .then(Commands.argument("Game Length", IntegerArgumentType.integer())
                                                             .then(Commands.literal("seconds")
-                                                                    .executes(NetherRunStart::executeStartInSeconds)
+                                                                    .executes(NetherRunCommands::executeStartInSeconds)
                                                             )
                                                     )
                                             )
@@ -65,7 +65,7 @@ public class NetherRunStart {
                                             .then(Commands.argument("player2", EntityArgument.player())
                                                     .then(Commands.argument("Game Length", IntegerArgumentType.integer())
                                                             .then(Commands.literal("ticks")
-                                                                    .executes(NetherRunStart::executeStartInTicks)
+                                                                    .executes(NetherRunCommands::executeStartInTicks)
                                                             )
                                                     )
                                             )
@@ -78,7 +78,7 @@ public class NetherRunStart {
                                     .then(Commands.argument("player1", EntityArgument.player())
                                             .then(Commands.argument("player2", EntityArgument.player())
                                                     .then(Commands.argument("Game Length", IntegerArgumentType.integer())
-                                                            .executes(NetherRunStart::executeStartInMinutes)
+                                                            .executes(NetherRunCommands::executeStartInMinutes)
                                                     )
                                             )
                                     )
@@ -89,7 +89,7 @@ public class NetherRunStart {
             dispatcher.register(
                     Commands.literal("netherrun")
                             .then(Commands.literal("stop")
-                                    .executes(NetherRunStart::executeStop)
+                                    .executes(NetherRunCommands::executeStop)
                             )
             );
         }
@@ -97,7 +97,7 @@ public class NetherRunStart {
             dispatcher.register(
                     Commands.literal("netherrun")
                             .then(Commands.literal("ready")
-                                    .executes(NetherRunStart::executeReady)
+                                    .executes(NetherRunCommands::executeReady)
                             )
             );
         }
@@ -107,7 +107,7 @@ public class NetherRunStart {
                             .then(Commands.literal("bounds")
                                     .then(Commands.literal("roof")
                                             .then(Commands.argument("Nether Roof Y Coord", IntegerArgumentType.integer())
-                                                    .executes(NetherRunStart::executeRoofLimit)
+                                                    .executes(NetherRunCommands::executeRoofLimit)
                                             )
                                     )
                             )
@@ -117,7 +117,7 @@ public class NetherRunStart {
                             .then(Commands.literal("bounds")
                                     .then(Commands.literal("floor")
                                             .then(Commands.argument("Nether Floor Y Coord", IntegerArgumentType.integer())
-                                                    .executes(NetherRunStart::executeFloorLimit)
+                                                    .executes(NetherRunCommands::executeFloorLimit)
                                             )
                                     )
                             )
@@ -145,7 +145,7 @@ public class NetherRunStart {
                     Commands.literal("netherrun")
                             .then(Commands.literal("kit")
                                     .then(Commands.literal("load")
-                                            .executes(NetherRunStart::executeKitLoad)
+                                            .executes(NetherRunCommands::executeKitLoad)
                                     )
                             )
             );
@@ -153,7 +153,7 @@ public class NetherRunStart {
                     Commands.literal("netherrun")
                             .then(Commands.literal("kit")
                                     .then(Commands.literal("save")
-                                            .executes(NetherRunStart::executeKitSave)
+                                            .executes(NetherRunCommands::executeKitSave)
                                     )
                             )
             );
@@ -162,7 +162,21 @@ public class NetherRunStart {
             dispatcher.register(
                     Commands.literal("netherrun")
                             .then(Commands.literal("help")
-                                    .executes(NetherRunStart::executeHelp)
+                                    .executes(NetherRunCommands::executeHelp)
+                            )
+            );
+        }
+        /*pause and resume*/{
+            dispatcher.register(
+                    Commands.literal("netherrun")
+                            .then(Commands.literal("pause")
+                                    .executes(NetherRunCommands::executePause)
+                            )
+            );
+            dispatcher.register(
+                    Commands.literal("netherrun")
+                            .then(Commands.literal("resume")
+                                    .executes(NetherRunCommands::executeResume)
                             )
             );
         }
@@ -402,7 +416,28 @@ public class NetherRunStart {
                     .append(" - marks you as ready").withStyle(ChatFormatting.RESET), false);
             context.getSource().sendSuccess(() -> Component.literal("/netherrun color").withStyle(ChatFormatting.BOLD)
                     .append(" - sets your team color").withStyle(ChatFormatting.RESET), false);
+            context.getSource().sendSuccess(() -> Component.literal("/netherrun pause").withStyle(ChatFormatting.BOLD)
+                .append(" - pauses NetherRun").withStyle(ChatFormatting.RESET), false);
+            context.getSource().sendSuccess(() -> Component.literal("/netherrun resume").withStyle(ChatFormatting.BOLD)
+                .append(" - resumes NetherRun").withStyle(ChatFormatting.RESET), false);
             return 1;
+    }
+
+
+
+    private static int executePause(CommandContext<CommandSourceStack> context) {
+        ServerLevel overworld = context.getSource().getServer().getLevel(Level.OVERWORLD);
+        NetherRunScoresData scoresData = NetherRunScoresDataManager.get(overworld);
+        scoresData.setGamePaused(true);
+        broadcastMessageToAllPlayers(context.getSource().getServer(), Component.literal("NetherRun has been paused").withStyle(ChatFormatting.GRAY));
+        return 0;
+    }
+    private static int executeResume(CommandContext<CommandSourceStack> context) {
+        ServerLevel overworld = context.getSource().getServer().getLevel(Level.OVERWORLD);
+        NetherRunScoresData scoresData = NetherRunScoresDataManager.get(overworld);
+        scoresData.setGamePaused(false);
+        broadcastMessageToAllPlayers(context.getSource().getServer(), Component.literal("NetherRun has been resumed").withStyle(ChatFormatting.GRAY));
+        return 0;
     }
 
 

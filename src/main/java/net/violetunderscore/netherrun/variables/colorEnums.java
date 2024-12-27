@@ -57,7 +57,7 @@ public class colorEnums {
                 Items.BLUE_CONCRETE,
                 Items.PURPLE_CONCRETE,
                 Items.PINK_CONCRETE,
-                Items.LIGHT_GRAY_CONCRETE,
+                Items.WHITE_CONCRETE,
                 Items.GRAY_CONCRETE,
                 Items.BLACK_CONCRETE,
                 Items.MAGENTA_CONCRETE,

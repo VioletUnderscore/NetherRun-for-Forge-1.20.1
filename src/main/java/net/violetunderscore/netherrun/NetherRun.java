@@ -1,19 +1,8 @@
 package net.violetunderscore.netherrun;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.screens.PauseScreen;
 import net.minecraft.client.renderer.entity.EntityRenderers;
-import net.minecraft.network.chat.Component;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.ScreenEvent;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.capabilities.CapabilityManager;
-import net.minecraftforge.common.capabilities.CapabilityToken;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
@@ -27,7 +16,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.violetunderscore.netherrun.block.ModBlocks;
 import net.violetunderscore.netherrun.block.entity.ModBlockEntities;
-import net.violetunderscore.netherrun.commands.NetherRunStart;
+import net.violetunderscore.netherrun.commands.NetherRunCommands;
 import net.violetunderscore.netherrun.entity.ModEntities;
 import net.violetunderscore.netherrun.entity.client.NetherRunBoatRenderer;
 import net.violetunderscore.netherrun.item.ModCreativeModeTabs;
@@ -95,7 +84,7 @@ public class NetherRun
     }
     @SubscribeEvent
     public void onRegisterCommands(RegisterCommandsEvent event) {
-        NetherRunStart.register(event.getDispatcher());
+        NetherRunCommands.register(event.getDispatcher());
     }
 
 

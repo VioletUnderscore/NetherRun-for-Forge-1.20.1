@@ -9,6 +9,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityEvent;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.vehicle.Boat;
@@ -20,6 +21,7 @@ import net.minecraftforge.client.event.RenderGuiOverlayEvent;
 import net.minecraftforge.client.event.ScreenEvent;
 import net.minecraftforge.client.gui.overlay.GuiOverlayManager;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityMountEvent;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
@@ -40,6 +42,7 @@ import net.violetunderscore.netherrun.network.NetworkHandler;
 import net.violetunderscore.netherrun.particle.ModParticles;
 import net.violetunderscore.netherrun.variables.global.scores.NetherRunScoresData;
 import net.violetunderscore.netherrun.variables.global.scores.NetherRunScoresDataManager;
+import net.violetunderscore.netherrun.variables.player.kits.PlayerKitsProvider;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -212,6 +215,30 @@ public class ForgeEventBusEvents {
         for (ServerPlayer player : server.getPlayerList().getPlayers()) {
             // Set each player to Spectator Mode
             player.setGameMode(GameType.SPECTATOR);
+        }
+    }
+
+    @SubscribeEvent
+    public static void onPlayerClone(PlayerEvent.Clone event) {
+        LOGGER.info("onPlayerClone ran");
+        if (!event.isWasDeath()) return;
+
+        event.getOriginal().getCapability(PlayerKitsProvider.PLAYER_KITS).ifPresent(oldKit -> {
+            event.getEntity().getCapability(PlayerKitsProvider.PLAYER_KITS).ifPresent(newKit -> {
+                newKit.copyFrom(oldKit);
+
+                LOGGER.info("newKit.copyFrom ran");
+            });
+        });
+    }
+
+    @SubscribeEvent
+    public static void onAttachCapabilitiesPlayer(AttachCapabilitiesEvent<Entity> event) {
+        if (event.getObject() instanceof Player) {
+            event.addCapability(
+                    new ResourceLocation(NetherRun.MODID, "player_kits"),
+                    new PlayerKitsProvider()
+            );
         }
     }
 }
