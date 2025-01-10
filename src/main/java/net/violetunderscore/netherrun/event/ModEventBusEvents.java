@@ -3,11 +3,9 @@ package net.violetunderscore.netherrun.event;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -17,20 +15,16 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
-import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.network.PacketDistributor;
 import net.violetunderscore.netherrun.NetherRun;
-import net.violetunderscore.netherrun.item.ModItems;
 import net.violetunderscore.netherrun.network.NetherrunPlaceBlockPacket;
 import net.violetunderscore.netherrun.network.NetworkHandler;
 import net.violetunderscore.netherrun.network.SyncNetherRunScoresPacket;
 import net.violetunderscore.netherrun.network.playervars.PVarSTCPacket;
-import net.violetunderscore.netherrun.network.playervars.teleportKeyDownPacket;
 import net.violetunderscore.netherrun.variables.colorEnums;
 import net.violetunderscore.netherrun.variables.global.scores.NetherRunScoresData;
 import net.violetunderscore.netherrun.variables.global.scores.NetherRunScoresDataManager;
@@ -350,35 +344,75 @@ public class ModEventBusEvents {
             if (scoresData.isGameActive() && !scoresData.isGamePaused()) {
                 if (scoresData.isRoundJustEnded()) {
                     scoresData.setWhosTurn(scoresData.getWhosTurn() + 1);
+                    broadcastMessageToAllPlayers(
+                            server,
+                            Component.literal("")
+                                    .append(Component.literal("==========").withStyle(ChatFormatting.GRAY))
+                                    .append(Component.literal("N").withStyle(ChatFormatting.WHITE, ChatFormatting.BOLD, ChatFormatting.UNDERLINE))
+                                    .append(Component.literal("R").withStyle(ChatFormatting.LIGHT_PURPLE, ChatFormatting.BOLD, ChatFormatting.UNDERLINE))
+                                    .append(Component.literal("==========").withStyle(ChatFormatting.GRAY))
+                                    .append("\n")
+                    );
                     if (scoresData.getWhosTurn() > 2) {
-                        broadcastMessageToAllPlayers(event.level.getServer(), Component.literal(
-                                "Round " + scoresData.getRound() + " is over! (" + timeToString(scoresData.getTeam1Score()) + " - " + timeToString(scoresData.getTeam2Score()) + ")"));
+                        broadcastMessageToAllPlayers(
+                                server,
+                                Component.literal("")
+                                        .append(Component.literal("Round ").withStyle(ChatFormatting.WHITE))
+                                        .append(Component.literal("" + scoresData.getRound()).withStyle(ChatFormatting.WHITE, ChatFormatting.BOLD, ChatFormatting.UNDERLINE))
+                                        .append(Component.literal(" is over! ").withStyle(ChatFormatting.WHITE))
+                                        .append(Component.literal("(" + timeToString(scoresData.getTeam1Score()) + " - " + timeToString(scoresData.getTeam2Score()) + ")").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC))
+                                        .append("\n")
+                        );
                         scoresData.setWhosTurn(1);
                         scoresData.setRound(scoresData.getRound() + 1);
                         if (Math.max(scoresData.getTeam1Score(), scoresData.getTeam2Score()) > scoresData.getTargetScore()) {
                             if (scoresData.getTeam1Score() > scoresData.getTeam2Score()) {
-                                broadcastMessageToAllPlayers(event.level.getServer(), Component.literal(
-                                        scoresData.getPlayer1Name() + "Wins the game!"));
+                                broadcastMessageToAllPlayers(
+                                        server,
+                                        Component.literal("")
+                                                .append(Component.literal(scoresData.getPlayer1Name().toUpperCase() + " WINS THE GAME!").withStyle(ChatFormatting.GREEN, ChatFormatting.BOLD, ChatFormatting.UNDERLINE))
+                                                .append("\n")
+                                );
                                 scoresData.setGameActive(false);
                             } else if (scoresData.getTeam1Score() < scoresData.getTeam2Score()) {
-                                broadcastMessageToAllPlayers(event.level.getServer(), Component.literal(
-                                        scoresData.getPlayer2Name() + "Wins the game!"));
+                                broadcastMessageToAllPlayers(
+                                        server,
+                                        Component.literal("")
+                                                .append(Component.literal(scoresData.getPlayer2Name().toUpperCase() + " WINS THE GAME!").withStyle(ChatFormatting.GREEN, ChatFormatting.BOLD, ChatFormatting.UNDERLINE))
+                                                .append("\n")
+                                );
                                 scoresData.setGameActive(false);
                             } else
                                 broadcastMessageToAllPlayers(event.level.getServer(), Component.literal(
-                                        "HOW TF DID YOU GET THE EXACT SAME TIME?"));
+                                        "<VioletUnderscore> HOW TF DID YOU GET THE EXACT SAME TIME?!?"));
                         }
                     }
                     if (scoresData.isGameActive()) {
-                        broadcastMessageToAllPlayers(event.level.getServer(), Component.literal(
-                                "Starting Round " + (scoresData.getRound()) + "..."));
+                        broadcastMessageToAllPlayers(
+                                server,
+                                Component.literal("")
+                                        .append(Component.literal("Starting Round " + (scoresData.getRound()) + "...").withStyle(ChatFormatting.WHITE, ChatFormatting.ITALIC))
+                                        .append("\n")
+                        );
                         if (scoresData.getWhosTurn() == 1) {
-                            broadcastMessageToAllPlayers(event.level.getServer(), Component.literal(
-                                    "Your turn, " + (scoresData.getPlayer1Name()) + "!"));
+                            broadcastMessageToAllPlayers(
+                                    server,
+                                    Component.literal("")
+                                            .append(Component.literal("Your turn, ").withStyle(ChatFormatting.WHITE))
+                                            .append(Component.literal(scoresData.getPlayer1Name()).withStyle(ChatFormatting.LIGHT_PURPLE, ChatFormatting.ITALIC))
+                                            .append(Component.literal("!").withStyle(ChatFormatting.WHITE))
+                                            .append("\n")
+                            );
                         }
                         else if (scoresData.getWhosTurn() == 2) {
-                            broadcastMessageToAllPlayers(event.level.getServer(), Component.literal(
-                                    "Your turn, " + (scoresData.getPlayer2Name()) + "!"));
+                            broadcastMessageToAllPlayers(
+                                    server,
+                                    Component.literal("")
+                                            .append(Component.literal("Your turn, ").withStyle(ChatFormatting.WHITE))
+                                            .append(Component.literal(scoresData.getPlayer2Name()).withStyle(ChatFormatting.LIGHT_PURPLE, ChatFormatting.ITALIC))
+                                            .append(Component.literal("!").withStyle(ChatFormatting.WHITE))
+                                            .append("\n")
+                            );
                         }
                         else {
                             broadcastMessageToAllPlayers(event.level.getServer(), Component.literal(
@@ -387,6 +421,11 @@ public class ModEventBusEvents {
                         }
                     }
                     scoresData.setRoundJustEnded(false);
+                    broadcastMessageToAllPlayers(
+                            server,
+                            Component.literal("")
+                                    .append(Component.literal("======================").withStyle(ChatFormatting.GRAY))
+                    );
                 }
                 if (scoresData.isRoundActive()) {
 

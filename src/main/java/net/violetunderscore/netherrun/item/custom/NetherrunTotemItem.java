@@ -12,9 +12,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.violetunderscore.netherrun.network.NetworkHandler;
 import net.violetunderscore.netherrun.network.NetherrunPlaceBlockPacket;
 
-
-//sorry this is so hard to read maybe ill come fix it at some point lol :p
-
 public class NetherrunTotemItem extends Item {
 
     public NetherrunTotemItem(Properties pProperties) {

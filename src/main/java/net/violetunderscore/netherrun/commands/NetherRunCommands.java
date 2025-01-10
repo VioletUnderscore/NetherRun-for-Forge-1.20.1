@@ -8,6 +8,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
+import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
@@ -180,6 +181,8 @@ public class NetherRunCommands {
                             )
             );
         }
+
+        //{dispatcher.register(Commands.literal("netherrun").then(Commands.literal("test").executes(NetherRunCommands::executeTEST)));}
     }
 
     private static int executeStart(CommandContext<CommandSourceStack> context, int measurement) {
@@ -192,16 +195,14 @@ public class NetherRunCommands {
             try {
                 player1 = EntityArgument.getPlayer(context, "player1");
             } catch (Exception e) {
-                // Handle exception or invalid argument input gracefully.
-                context.getSource().sendFailure(Component.literal("Invalid player specified."));
+                context.getSource().sendFailure(Component.literal("Invalid player 1 specified."));
                 return 0;
             }
             Player player2;
             try {
                 player2 = EntityArgument.getPlayer(context, "player2");
             } catch (Exception e) {
-                // Handle exception or invalid argument input gracefully.
-                context.getSource().sendFailure(Component.literal("Invalid player specified."));
+                context.getSource().sendFailure(Component.literal("Invalid player 2 specified."));
                 return 0;
             }
 
@@ -211,7 +212,37 @@ public class NetherRunCommands {
             }
             int time = IntegerArgumentType.getInteger(context, "Game Length");
 
-            context.getSource().sendSuccess(() -> Component.literal("NETHER RUN STARTING!"), false);
+            broadcastMessageToAllPlayers(
+                    context.getSource().getServer(),
+                    Component.literal("")
+                            .append("\n")
+                            .append(Component.literal("Welcome to ").withStyle(ChatFormatting.WHITE))
+                            .append(Component.literal("NETHER").withStyle(ChatFormatting.BOLD, ChatFormatting.UNDERLINE)
+                                    .withStyle(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://www.curseforge.com/minecraft/mc-mods/netherrun"))))
+                            .append(Component.literal("RUN!").withStyle(ChatFormatting.LIGHT_PURPLE, ChatFormatting.BOLD, ChatFormatting.UNDERLINE)
+                                    .withStyle(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://www.curseforge.com/minecraft/mc-mods/netherrun"))))
+                            .append("\n")
+                            .append(Component.literal("by ").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC))
+                            .append(Component.literal("VioletUnderscore").withStyle(ChatFormatting.DARK_AQUA, ChatFormatting.ITALIC, ChatFormatting.UNDERLINE)
+                                    .withStyle(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://www.youtube.com/@VioletUnderscore"))))
+                            .append("\n\n")
+                            .append(Component.literal("Remember to set up your kit!").withStyle(ChatFormatting.WHITE))
+                            .append("\n\n")
+                            .append(Component.literal("Playing with ").withStyle(ChatFormatting.GRAY))
+                            .append(Component.literal("Amplified Nether").withStyle(ChatFormatting.DARK_RED, ChatFormatting.UNDERLINE)
+                                    .withStyle(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://www.curseforge.com/minecraft/mc-mods/amplified-nether"))))
+                            .append(Component.literal("?").withStyle(ChatFormatting.GRAY))
+                            .append(Component.literal("\n"))
+                            .append(Component.literal("Run ").withStyle(ChatFormatting.GRAY))
+                            .append(Component.literal("/netherrun bounds roof 256").withStyle(ChatFormatting.YELLOW)
+                                    .withStyle(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/netherrun bounds roof 256"))))
+                            .append("\n\n")
+                            .append(Component.literal("Type ").withStyle(ChatFormatting.WHITE))
+                            .append(Component.literal("/netherrun ready").withStyle(ChatFormatting.GREEN)
+                                    .withStyle(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/netherrun ready"))))
+                            .append(Component.literal(" to start!").withStyle(ChatFormatting.WHITE))
+                            .append("\n")
+            );
 
             specAll(overworld);
             scoresData.setTeam1Score(0);
@@ -457,6 +488,43 @@ public class NetherRunCommands {
     }
     private static void broadcastMessageToAllPlayers(MinecraftServer server, Component message) {
         server.getPlayerList().broadcastSystemMessage(message, false);
+    }
+
+
+
+
+
+    private static int executeTEST(CommandContext<CommandSourceStack> context) {
+        broadcastMessageToAllPlayers(
+                context.getSource().getServer(),
+                Component.literal("")
+                        .append(Component.literal("Welcome to ").withStyle(ChatFormatting.WHITE))
+                        .append(Component.literal("NETHER").withStyle(ChatFormatting.BOLD, ChatFormatting.UNDERLINE)
+                                .withStyle(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://www.curseforge.com/minecraft/mc-mods/netherrun"))))
+                        .append(Component.literal("RUN!").withStyle(ChatFormatting.LIGHT_PURPLE, ChatFormatting.BOLD, ChatFormatting.UNDERLINE)
+                                .withStyle(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://www.curseforge.com/minecraft/mc-mods/netherrun"))))
+                        .append("\n")
+                        .append(Component.literal("by ").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC))
+                        .append(Component.literal("VioletUnderscore").withStyle(ChatFormatting.DARK_AQUA, ChatFormatting.ITALIC, ChatFormatting.UNDERLINE)
+                                .withStyle(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://www.youtube.com/@VioletUnderscore"))))
+                        .append("\n\n")
+                        .append(Component.literal("Remember to set up your kit!").withStyle(ChatFormatting.WHITE))
+                        .append("\n\n")
+                        .append(Component.literal("Playing with ").withStyle(ChatFormatting.GRAY))
+                        .append(Component.literal("Amplified Nether").withStyle(ChatFormatting.DARK_RED, ChatFormatting.UNDERLINE)
+                                .withStyle(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://www.curseforge.com/minecraft/mc-mods/amplified-nether"))))
+                        .append(Component.literal("?").withStyle(ChatFormatting.GRAY))
+                        .append(Component.literal("\n"))
+                        .append(Component.literal("Run ").withStyle(ChatFormatting.GRAY))
+                        .append(Component.literal("/netherrun bounds roof 256").withStyle(ChatFormatting.YELLOW)
+                                .withStyle(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/netherrun bounds roof 256"))))
+                        .append("\n\n")
+                        .append(Component.literal("Type ").withStyle(ChatFormatting.WHITE))
+                        .append(Component.literal("/netherrun ready").withStyle(ChatFormatting.GREEN)
+                                .withStyle(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/netherrun ready"))))
+                        .append(Component.literal(" to start!").withStyle(ChatFormatting.WHITE))
+        );
+        return 1;
     }
 }
 

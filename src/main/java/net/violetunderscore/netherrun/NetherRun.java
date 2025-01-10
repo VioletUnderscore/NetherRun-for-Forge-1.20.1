@@ -34,6 +34,8 @@ public class NetherRun
     //My Variables
     // Define mod id in a common place for everything to reference
     public static final String MODID = "netherrun";
+    public static final String MODVER = "m8d10-1";
+    public static final Boolean SHOWMODVER = true;
     // Directly reference a slf4j logger
     private static final Logger LOGGER = LogManager.getLogger();
     public NetherRun()

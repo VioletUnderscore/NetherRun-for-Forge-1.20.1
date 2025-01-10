@@ -1,22 +1,12 @@
 package net.violetunderscore.netherrun.client;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
 import net.minecraftforge.client.gui.overlay.IGuiOverlay;
 import net.violetunderscore.netherrun.NetherRun;
 import net.violetunderscore.netherrun.client.keybinds.NetherRunKeybinds;
 import net.violetunderscore.netherrun.variables.colorEnums;
-import net.violetunderscore.netherrun.variables.global.scores.NetherRunScoresData;
-import net.violetunderscore.netherrun.variables.global.scores.NetherRunScoresDataManager;
 import net.violetunderscore.netherrun.variables.player.kits.PlayerKitsProvider;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -44,10 +34,16 @@ public class NetherRunScoresDisplay {
 
 
     public static final IGuiOverlay HUD_NR_SCORE_DISPLAY = ((gui, guiGraphics, partialTick, width, height) -> {
-        int x = width / 2;
+        Player player = Minecraft.getInstance().player;
+        int x = 0;
         int y = height;
 
-        Player player = Minecraft.getInstance().player;
+        if (NetherRun.SHOWMODVER) {
+            guiGraphics.drawString(Minecraft.getInstance().font, NetherRun.MODVER, x + 1, y - 10, 0xAAAAAA);
+        }
+
+        x = width / 2;
+        y = height;
 
         if (NetherRunGlobalClientData.isGameActive() && NetherRunGlobalClientData.getSpawnTimerR() != 0)
         {
