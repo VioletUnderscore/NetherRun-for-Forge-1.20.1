@@ -1,18 +1,14 @@
 package net.violetunderscore.netherrun.block.entity;
 
-import com.google.common.graph.Network;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraftforge.network.PacketDistributor;
 import net.violetunderscore.netherrun.block.ModBlocks;
-import net.violetunderscore.netherrun.block.custom.GoUpBlock;
-import net.violetunderscore.netherrun.network.NetherrunPlaceBlockPacket;
+import net.violetunderscore.netherrun.network.packets.NetherrunPlaceBlockPacket;
 import net.violetunderscore.netherrun.network.NetworkHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

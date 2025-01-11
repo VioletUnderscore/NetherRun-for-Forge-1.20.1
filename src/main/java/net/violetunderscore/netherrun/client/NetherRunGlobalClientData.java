@@ -25,6 +25,7 @@ public class NetherRunGlobalClientData {
     private static boolean team2Ready = false;
     private static boolean roundJustEnded = false;
     private static boolean gamePaused = false;
+    private static boolean runnerInFortress = false;
     private static String player1Name = "";
     private static String player2Name = "";
 
@@ -92,6 +93,9 @@ public class NetherRunGlobalClientData {
     }
     public static void setGamePaused(boolean paused) {
         gamePaused = paused;
+    }
+    public static void setRunnerInFortress(boolean paused) {
+        runnerInFortress = paused;
     }
 
     public static void setPlayer1Name(String ended) {player1Name = ended;}
@@ -161,6 +165,9 @@ public class NetherRunGlobalClientData {
     }
     public static boolean isGamePaused() {
         return gamePaused;
+    }
+    public static boolean isRunnerInFortress() {
+        return runnerInFortress;
     }
 
     public static String getPlayer1Name() {

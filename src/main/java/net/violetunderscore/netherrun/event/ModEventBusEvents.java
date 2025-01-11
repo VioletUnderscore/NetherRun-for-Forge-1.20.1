@@ -1,9 +1,15 @@
 package net.violetunderscore.netherrun.event;
 
 import net.minecraft.ChatFormatting;
+import net.minecraft.advancements.critereon.LocationPredicate;
+import net.minecraft.advancements.critereon.PlayerTrigger;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ChunkLevel;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
@@ -11,20 +17,28 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.StructureManager;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.chunk.ChunkAccess;
+import net.minecraft.world.level.levelgen.structure.BuiltinStructures;
+import net.minecraft.world.level.levelgen.structure.Structure;
+import net.minecraft.world.level.levelgen.structure.StructureStart;
+import net.minecraft.world.level.levelgen.structure.StructureType;
+import net.minecraft.world.level.levelgen.structure.structures.NetherFortressStructure;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.network.PacketDistributor;
 import net.violetunderscore.netherrun.NetherRun;
-import net.violetunderscore.netherrun.network.NetherrunPlaceBlockPacket;
+import net.violetunderscore.netherrun.network.packets.NetherrunPlaceBlockPacket;
 import net.violetunderscore.netherrun.network.NetworkHandler;
-import net.violetunderscore.netherrun.network.SyncNetherRunScoresPacket;
-import net.violetunderscore.netherrun.network.playervars.PVarSTCPacket;
+import net.violetunderscore.netherrun.network.packets.SyncNetherRunScoresPacket;
+import net.violetunderscore.netherrun.network.packets.playervars.PVarSTCPacket;
 import net.violetunderscore.netherrun.variables.colorEnums;
 import net.violetunderscore.netherrun.variables.global.scores.NetherRunScoresData;
 import net.violetunderscore.netherrun.variables.global.scores.NetherRunScoresDataManager;
@@ -34,6 +48,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Random;
 
 
@@ -68,6 +83,8 @@ public class ModEventBusEvents {
         if (event.side == LogicalSide.SERVER) {
             ServerLevel overworld = event.player.level().getServer().getLevel(Level.OVERWORLD);
             NetherRunScoresData scoresData = NetherRunScoresDataManager.get(overworld);
+
+
             if (scoresData.isGameActive()) {
                 int team = 0;
                 if (Objects.equals(scoresData.getPlayer1Name(), event.player.getName().getString())) {
@@ -84,10 +101,10 @@ public class ModEventBusEvents {
                         if (!(scoresData.getNetherFloor() >= scoresData.getNetherRoof())) {
                             if (event.player.position().y > scoresData.getNetherRoof() - 5) {
                                 event.player.teleportTo(event.player.position().x, scoresData.getNetherRoof() - 10, event.player.position().z);
-                                event.player.sendSystemMessage(Component.literal("The Nether Roof is OFF LIMITS!"));
+                                event.player.sendSystemMessage(Component.literal("The Nether Roof is OFF LIMITS!").withStyle(ChatFormatting.RED, ChatFormatting.BOLD));
                             } else if (event.player.position().y < scoresData.getNetherFloor() + 5) {
                                 event.player.teleportTo(event.player.position().x, scoresData.getNetherFloor() + 10, event.player.position().z);
-                                event.player.sendSystemMessage(Component.literal("The Void is OFF LIMITS!"));
+                                event.player.sendSystemMessage(Component.literal("The Void is OFF LIMITS!").withStyle(ChatFormatting.RED, ChatFormatting.BOLD));
                             }
                         }
                     }
@@ -119,7 +136,25 @@ public class ModEventBusEvents {
                     }
                     if (team == 1) {
                         if (scoresData.getWhosTurn() == 1) {
-                            supplyPlayer(true, event.player);
+                            /*Detect Fortress*/
+                            {
+                                ServerLevel serverLevel = (ServerLevel) event.player.level();
+
+                                boolean inFortress;
+                                if (!ModList.get().isLoaded("betterfortresses")) {
+                                    ResourceKey<Structure> fortressKey = ResourceKey.create(Registries.STRUCTURE, new ResourceLocation("minecraft", "fortress"));
+                                    LocationPredicate fortressPredicate = LocationPredicate.inStructure(fortressKey);
+                                    inFortress = fortressPredicate.matches(serverLevel, event.player.blockPosition().getX(), event.player.blockPosition().getY(), event.player.blockPosition().getZ());
+                                }
+                                else {
+                                    ResourceKey<Structure> yungFortressKey = ResourceKey.create(Registries.STRUCTURE, new ResourceLocation("betterfortresses", "fortress"));
+                                    LocationPredicate yungFortressPredicate = LocationPredicate.inStructure(yungFortressKey);
+                                    inFortress = yungFortressPredicate.matches(serverLevel, event.player.blockPosition().getX(), event.player.blockPosition().getY(), event.player.blockPosition().getZ());
+                                }
+
+                                scoresData.setRunnerInFortress(inFortress);
+                            }
+                            supplyPlayer(true, event.player, scoresData);
                             try {
                                 event.player.getCapability(PlayerKitsProvider.PLAYER_KITS).ifPresent(kit -> {
                                     kit.setCanWarp(false);
@@ -129,7 +164,7 @@ public class ModEventBusEvents {
 
                             }
                         } else {
-                            supplyPlayer(false, event.player);
+                            supplyPlayer(false, event.player, scoresData);
                             try {
                                 Player runner = event.player.level().getServer().getPlayerList().getPlayerByName(scoresData.getPlayer2Name());
                                 event.player.getCapability(PlayerKitsProvider.PLAYER_KITS).ifPresent(kit -> {
@@ -195,7 +230,25 @@ public class ModEventBusEvents {
                         }
                     } else if (team == 2) {
                         if (scoresData.getWhosTurn() == 2) {
-                            supplyPlayer(true, event.player);
+                            /*Detect Fortress*/
+                            {
+                                ServerLevel serverLevel = (ServerLevel) event.player.level();
+
+                                boolean inFortress;
+                                if (!ModList.get().isLoaded("betterfortresses")) {
+                                    ResourceKey<Structure> fortressKey = ResourceKey.create(Registries.STRUCTURE, new ResourceLocation("minecraft", "fortress"));
+                                    LocationPredicate fortressPredicate = LocationPredicate.inStructure(fortressKey);
+                                    inFortress = fortressPredicate.matches(serverLevel, event.player.blockPosition().getX(), event.player.blockPosition().getY(), event.player.blockPosition().getZ());
+                                }
+                                else {
+                                    ResourceKey<Structure> yungFortressKey = ResourceKey.create(Registries.STRUCTURE, new ResourceLocation("betterfortresses", "fortress"));
+                                    LocationPredicate yungFortressPredicate = LocationPredicate.inStructure(yungFortressKey);
+                                    inFortress = yungFortressPredicate.matches(serverLevel, event.player.blockPosition().getX(), event.player.blockPosition().getY(), event.player.blockPosition().getZ());
+                                }
+
+                                scoresData.setRunnerInFortress(inFortress);
+                            }
+                            supplyPlayer(true, event.player, scoresData);
                             try {
                                 event.player.getCapability(PlayerKitsProvider.PLAYER_KITS).ifPresent(kit -> {
                                     kit.setCanWarp(false);
@@ -205,7 +258,7 @@ public class ModEventBusEvents {
 
                             }
                         } else {
-                            supplyPlayer(false, event.player);
+                            supplyPlayer(false, event.player, scoresData);
                             try {
                                 Player runner = event.player.level().getServer().getPlayerList().getPlayerByName(scoresData.getPlayer1Name());
                                 event.player.getCapability(PlayerKitsProvider.PLAYER_KITS).ifPresent(kit -> {
@@ -307,6 +360,7 @@ public class ModEventBusEvents {
                                 scoresData.isTeam2Ready(),
                                 scoresData.isRoundJustEnded(),
                                 scoresData.isGamePaused(),
+                                scoresData.isRunnerInFortress(),
                                 scoresData.getPlayer1Name(),
                                 scoresData.getPlayer2Name()
                         ));
@@ -469,7 +523,7 @@ public class ModEventBusEvents {
                                     scoresData.getSpawnY(),
                                     scoresData.getSpawnZ()
                             );
-                            scoresData.setSpawnTimerH(200);
+                            scoresData.setSpawnTimerH(120);
                         }
                     } else if (scoresData.getSpawnTimerH() != 0) {
                         scoresData.setSpawnTimerH(scoresData.getSpawnTimerH() - 1);
@@ -560,14 +614,16 @@ public class ModEventBusEvents {
         return server.getPlayerList().getPlayerByName(scoresData.getPlayer2Name());
     }
 
-    private static void supplyPlayer(boolean isRunner, Player player) {
+    private static void supplyPlayer(boolean isRunner, Player player, NetherRunScoresData scoresData) {
         if (isRunner) {
             player.getInventory().armor.set(3, new ItemStack(Items.DIAMOND_HELMET));
             player.getInventory().armor.set(2, new ItemStack(Items.LEATHER_CHESTPLATE));
             player.getInventory().armor.set(1, new ItemStack(Items.LEATHER_LEGGINGS));
             player.getInventory().armor.set(0, new ItemStack(Items.DIAMOND_BOOTS));
             player.setGlowingTag(true);
-            player.heal(0.01f);
+            if (!scoresData.isRunnerInFortress()) {
+                player.heal(0.01f);
+            }
         }
         else {
             player.getInventory().armor.set(3, new ItemStack(Items.NETHERITE_HELMET));

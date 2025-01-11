@@ -1,4 +1,4 @@
-package net.violetunderscore.netherrun.network;
+package net.violetunderscore.netherrun.network.packets;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.network.NetworkEvent;
@@ -28,6 +28,7 @@ public class SyncNetherRunScoresPacket {
     private final boolean team2Ready;
     private final boolean roundJustEnded;
     private final boolean gamePaused;
+    private final boolean runnerInFortress;
     private final String player1Name;
     private final String player2Name;
 
@@ -37,7 +38,7 @@ public class SyncNetherRunScoresPacket {
                                      int color1, int color2, int netherRoof, int netherFloor,
                                      boolean gameActive, boolean roundActive,
                                      boolean team1Ready, boolean team2Ready, boolean roundJustEnded,
-                                     boolean gamePaused,
+                                     boolean gamePaused, boolean runnerInFortress,
                                      String player1Name, String player2Name) {
         this.team1Score = team1Score;
         this.team2Score = team2Score;
@@ -60,6 +61,7 @@ public class SyncNetherRunScoresPacket {
         this.team2Ready = team2Ready;
         this.roundJustEnded = roundJustEnded;
         this.gamePaused = gamePaused;
+        this.runnerInFortress = runnerInFortress;
         this.player1Name = player1Name;
         this.player2Name = player2Name;
     }
@@ -86,6 +88,7 @@ public class SyncNetherRunScoresPacket {
         this.team2Ready = buf.readBoolean();
         this.roundJustEnded = buf.readBoolean();
         this.gamePaused = buf.readBoolean();
+        this.runnerInFortress = buf.readBoolean();
         this.player1Name = buf.readUtf(32767);
         this.player2Name = buf.readUtf(32767);
     }
@@ -112,6 +115,7 @@ public class SyncNetherRunScoresPacket {
         buf.writeBoolean(team2Ready);
         buf.writeBoolean(roundJustEnded);
         buf.writeBoolean(gamePaused);
+        buf.writeBoolean(runnerInFortress);
         buf.writeUtf(player1Name);
         buf.writeUtf(player2Name);
     }
@@ -139,6 +143,7 @@ public class SyncNetherRunScoresPacket {
             NetherRunGlobalClientData.setTeam2Ready(team2Ready);
             NetherRunGlobalClientData.setRoundJustEnded(roundJustEnded);
             NetherRunGlobalClientData.setGamePaused(gamePaused);
+            NetherRunGlobalClientData.setRunnerInFortress(runnerInFortress);
             NetherRunGlobalClientData.setPlayer1Name(player1Name);
             NetherRunGlobalClientData.setPlayer2Name(player2Name);
         });

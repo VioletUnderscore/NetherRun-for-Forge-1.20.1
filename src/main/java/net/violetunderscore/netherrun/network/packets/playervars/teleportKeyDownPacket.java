@@ -1,9 +1,8 @@
-package net.violetunderscore.netherrun.network.playervars;
+package net.violetunderscore.netherrun.network.packets.playervars;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.NetworkEvent;
-import net.violetunderscore.netherrun.network.NetworkHandler;
 import net.violetunderscore.netherrun.variables.player.kits.PlayerKitsProvider;
 
 import java.util.function.Supplier;

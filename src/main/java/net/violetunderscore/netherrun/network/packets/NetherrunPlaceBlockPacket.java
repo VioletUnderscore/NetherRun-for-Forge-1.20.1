@@ -1,4 +1,4 @@
-package net.violetunderscore.netherrun.network;
+package net.violetunderscore.netherrun.network.packets;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;

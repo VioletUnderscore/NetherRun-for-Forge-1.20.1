@@ -2,8 +2,6 @@ package net.violetunderscore.netherrun.block.custom;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
@@ -20,18 +18,11 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.violetunderscore.netherrun.block.ModBlocks;
 import net.violetunderscore.netherrun.block.entity.GoUpBlockEntity;
 import net.violetunderscore.netherrun.block.entity.ModBlockEntities;
-import net.violetunderscore.netherrun.item.ModItems;
-import net.violetunderscore.netherrun.network.ItemCooldownPacket;
-import net.violetunderscore.netherrun.network.NetworkHandler;
-import net.violetunderscore.netherrun.particle.ModParticles;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Random;
 
 
 public class GoUpBlock extends BaseEntityBlock {

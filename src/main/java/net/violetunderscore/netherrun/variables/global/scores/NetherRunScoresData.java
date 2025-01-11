@@ -51,6 +51,7 @@ public class NetherRunScoresData extends SavedData {
     private boolean team2Ready;
     private boolean roundJustEnded;
     private boolean gamePaused;
+    private boolean runnerInFortress;
     private String player1Name;
     private String player2Name;
 
@@ -76,6 +77,7 @@ public class NetherRunScoresData extends SavedData {
     private static final String TEAM2_READY_KEY = "team2Ready";
     private static final String ROUND_ENDED_KEY = "roundJustEnded";
     private static final String GAME_PAUSED_KEY = "gamePaused";
+    private static final String RUNNER_IN_FORTRESS_KEY = "runnerInFortress";
     private static final String TEAM1_PLAYER_KEY = "player1Name";
     private static final String TEAM2_PLAYER_KEY = "player2Name";
 
@@ -101,6 +103,7 @@ public class NetherRunScoresData extends SavedData {
         this.team2Ready = false;
         this.roundJustEnded = false;
         this.gamePaused = false;
+        this.runnerInFortress = false;
         this.player1Name = "";
         this.player2Name = "";
     }
@@ -129,6 +132,7 @@ public class NetherRunScoresData extends SavedData {
     public boolean isTeam2Ready() { return team2Ready; } /*  -  -  -  -  -  -  -  */ public void setTeam2Ready(boolean team2Ready) { this.team2Ready = team2Ready; setDirty(); }
     public boolean isRoundJustEnded() { return roundJustEnded; } /*  -  -  -  -  -  -  -  */ public void setRoundJustEnded(boolean roundJustEnded) { this.roundJustEnded = roundJustEnded; setDirty(); }
     public boolean isGamePaused() { return gamePaused; } /*  -  -  -  -  -  -  -  */ public void setGamePaused(boolean gamePaused) { this.gamePaused = gamePaused; setDirty(); }
+    public boolean isRunnerInFortress() { return runnerInFortress; } /*  -  -  -  -  -  -  -  */ public void setRunnerInFortress(boolean runnerInFortress) { this.runnerInFortress = runnerInFortress; setDirty(); }
 
     public String getPlayer1Name() { return player1Name; } /*  -  -  -  -  -  -  -  */ public void setPlayer1Name(String player1Name) { this.player1Name = player1Name; setDirty(); }
     public String getPlayer2Name() { return player2Name; } /*  -  -  -  -  -  -  -  */ public void setPlayer2Name(String player2Name) { this.player2Name = player2Name; setDirty(); }
@@ -166,6 +170,7 @@ public class NetherRunScoresData extends SavedData {
         tag.putBoolean(TEAM2_READY_KEY, team2Ready);
         tag.putBoolean(ROUND_ENDED_KEY, roundJustEnded);
         tag.putBoolean(GAME_PAUSED_KEY, gamePaused);
+        tag.putBoolean(RUNNER_IN_FORTRESS_KEY, runnerInFortress);
         tag.putString(TEAM1_PLAYER_KEY, player1Name);
         tag.putString(TEAM2_PLAYER_KEY, player2Name);
         return tag;
@@ -194,6 +199,7 @@ public class NetherRunScoresData extends SavedData {
         data.team2Ready = tag.getBoolean(TEAM2_READY_KEY);
         data.roundJustEnded = tag.getBoolean(ROUND_ENDED_KEY);
         data.gamePaused = tag.getBoolean(GAME_PAUSED_KEY);
+        data.runnerInFortress = tag.getBoolean(RUNNER_IN_FORTRESS_KEY);
         data.player1Name = tag.getString(TEAM1_PLAYER_KEY);
         data.player2Name = tag.getString(TEAM2_PLAYER_KEY);
         return data;
