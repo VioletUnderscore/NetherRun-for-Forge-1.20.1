@@ -7,13 +7,17 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.StructureManager;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.levelgen.structure.StructureStart;
 import net.minecraft.world.level.levelgen.structure.StructureType;
 import net.minecraftforge.client.gui.overlay.IGuiOverlay;
 import net.violetunderscore.netherrun.NetherRun;
+import net.violetunderscore.netherrun.block.ModBlocks;
 import net.violetunderscore.netherrun.client.keybinds.NetherRunKeybinds;
+import net.violetunderscore.netherrun.item.ModItems;
 import net.violetunderscore.netherrun.variables.colorEnums;
 import net.violetunderscore.netherrun.variables.player.kits.PlayerKitsProvider;
 import org.apache.logging.log4j.LogManager;
@@ -57,7 +61,7 @@ public class NetherRunScoresDisplay {
             /*FortressLogic*/
             {
                 if (NetherRunGlobalClientData.isRunnerInFortress()) {
-                    guiGraphics.drawString(Minecraft.getInstance().font, "Fortress Debuff: No Regen", 175, 12, 0x880000);
+                    guiGraphics.drawString(Minecraft.getInstance().font, "Fortress Debuff: 25% Regen", 175, 12, 0x880000);
                 }
             }
 
@@ -76,7 +80,8 @@ public class NetherRunScoresDisplay {
                         if (player.getCooldowns().isOnCooldown(player.getInventory().offhand.get(0).getItem()) || !Objects.requireNonNull(player.getInventory().offhand.get(0).getTag()).getBoolean("netherrun.ready")) {
                             if (player.getCooldowns().isOnCooldown(player.getInventory().offhand.get(0).getItem())) {
                                 guiGraphics.blit(NR_CD_SLOT, x - 121, y - 23, 0, 0, 24, 24, 24, 24);
-                                guiGraphics.drawString(Minecraft.getInstance().font, ((int) Math.abs(Math.ceil(player.getCooldowns().getCooldownPercent(player.getInventory().offhand.get(0).getItem(), partialTick) * 100 - 100)) + "%"), x - 118, y - 32, 0xFFFFFF);
+                                guiGraphics.drawString(Minecraft.getInstance().font, (precentToSecond(player.getInventory().offhand.get(0).getItem(), player.getCooldowns().getCooldownPercent(player.getInventory().offhand.get(0).getItem(), partialTick))), x - 118, y - 32, 0xFFFFFF);
+                                //guiGraphics.drawString(Minecraft.getInstance().font, ((int) Math.abs(Math.ceil(player.getCooldowns().getCooldownPercent(player.getInventory().offhand.get(0).getItem(), partialTick) * 100 - 100)) + "%"), x - 118, y - 32, 0xFFFFFF);
                             } else try {
                                 if (player.getInventory().offhand.get(0).getTag().getLong("netherrun.ready_timeout") - player.level().getGameTime() > 0) {
                                     guiGraphics.blit(NR_CD_SLOT, x - 121, y - 23, 0, 0, 24, 24, 24, 24);
@@ -98,7 +103,7 @@ public class NetherRunScoresDisplay {
                                 } else {
                                     if (player.getCooldowns().isOnCooldown(player.getInventory().getItem(v).getItem())) {
                                         guiGraphics.blit(NR_CD_SLOT, x - 92 + (v * 20), y - 23, 0, 0, 24, 24, 24, 24);
-                                        guiGraphics.drawString(Minecraft.getInstance().font, ((int) Math.abs(Math.ceil(player.getCooldowns().getCooldownPercent(player.getInventory().getItem(v).getItem(), partialTick) * 100 - 100)) + "%"), x - 89 + (v * 20), y - 32, 0xFFFFFF);
+                                        guiGraphics.drawString(Minecraft.getInstance().font, (precentToSecond(player.getInventory().getItem(v).getItem(), player.getCooldowns().getCooldownPercent(player.getInventory().getItem(v).getItem(), partialTick))), x - 89 + (v * 20), y - 32, 0xFFFFFF);
                                     } else try {
                                         if (player.getInventory().getItem(v).getTag().getLong("netherrun.ready_timeout") - player.level().getGameTime() > 0) {
                                             guiGraphics.blit(NR_CD_SLOT, x - 92 + (v * 20), y - 23, 0, 0, 24, 24, 24, 24);
@@ -116,12 +121,14 @@ public class NetherRunScoresDisplay {
                     if (slotcd) {
                         if (player.getCooldowns().isOnCooldown(player.getInventory().getItem(slot).getItem())) {
                             guiGraphics.blit(NR_CD_SLOT_SELECT, x - 92 + (slot * 20), y - 23, 0, 0, 24, 24, 24, 24);
-                            guiGraphics.drawString(Minecraft.getInstance().font, ((int) Math.abs(Math.ceil(player.getCooldowns().getCooldownPercent(player.getInventory().getItem(slot).getItem(), partialTick) * 100 - 100)) + "%"), x - 89 + (slot * 20), y - 32, 0xFFFFFF);
+                            guiGraphics.drawString(Minecraft.getInstance().font, (precentToSecond(player.getInventory().getItem(slot).getItem(), player.getCooldowns().getCooldownPercent(player.getInventory().getItem(slot).getItem(), partialTick))), x - 89 + (slot * 20), y - 32, 0xFFFFFF);
+                            guiGraphics.drawCenteredString(Minecraft.getInstance().font, (precentToSecond(player.getInventory().getItem(slot).getItem(), player.getCooldowns().getCooldownPercent(player.getInventory().getItem(slot).getItem(), partialTick))), width / 2, height / 2 + 12, 0xFFFFFF);
                             guiGraphics.blit(X_ICON, width / 2 - 9, height / 2 - 9, 0, 0, 18, 18, 18, 18);
                         } else try {
                             if (player.getInventory().getItem(slot).getTag().getLong("netherrun.ready_timeout") - player.level().getGameTime() > 0) {
                                 guiGraphics.blit(NR_CD_SLOT_SELECT, x - 92 + (slot * 20), y - 23, 0, 0, 24, 24, 24, 24);
                                 guiGraphics.drawString(Minecraft.getInstance().font, ("" + ((int) Math.ceil((Objects.requireNonNull(player.getInventory().getItem(slot).getTag()).getLong("netherrun.ready_timeout") - player.level().getGameTime()) / 20) + 1)), x - 89 + (slot * 20), y - 32, 0xFFFFFF);
+                                guiGraphics.drawString(Minecraft.getInstance().font, ("" + ((int) Math.ceil((Objects.requireNonNull(player.getInventory().getItem(slot).getTag()).getLong("netherrun.ready_timeout") - player.level().getGameTime()) / 20) + 1)), width / 2, height / 2 + 12, 0xFFFFFF);
                             }
                         } catch (NullPointerException e) {
                             guiGraphics.drawString(Minecraft.getInstance().font, "ERR", x - 89 + (slot * 20), y - 32, 0xFF0000);
@@ -200,5 +207,31 @@ public class NetherRunScoresDisplay {
                 + (int)Math.floor((Math.floor(time / 40) - (Math.floor((time / 40) / 60) * 60)) / 10)
                 + (int)((Math.floor(time / 40) - (Math.floor((time / 40) / 60) * 60)) - ((Math.floor((Math.floor(time / 40) - (Math.floor((time / 40) / 60) * 60)) / 10)) * 10))
         );
+    }
+
+    public static String precentToSecond(Item item, float precent) {
+        float cd = -1;
+        if (item == ModBlocks.GO_UP.get().asItem()) {
+            cd = 1.25f;
+        }
+        else if (item == ModBlocks.BLOCK_OF_GO_UP.get().asItem()) {
+            cd = 20f;
+        }
+        else if (item == Items.SHIELD) {
+            cd = 5f;
+        }
+        else if (item == ModItems.NETHERRUN_BOAT.get()) {
+            cd = 2.5f;
+        }
+        else {
+            return ((int)Math.ceil(Math.abs(precent * 100 - 100)) + "%");
+        }
+
+        if (precent * cd < 10) {
+            return ((Math.ceil((precent * cd) * 10) / 10) + "s");
+        }
+        else {
+            return ((int)(Math.ceil(precent * cd)) + "s");
+        }
     }
 }

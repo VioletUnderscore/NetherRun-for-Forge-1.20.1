@@ -77,7 +77,7 @@ public class ForgeEventBusEvents {
                 }
             }
         }
-        if (event.getEntity() instanceof Player && !totemNegatedDamage && !event.getEntity().isInvulnerable()) {
+        if (event.getEntity() instanceof Player && !totemNegatedDamage && event.getEntity().hurtTime == 0) {
             try {
                 ServerLevel overworld = event.getEntity().getServer().getLevel(Level.OVERWORLD);
                 NetherRunScoresData scoresData = NetherRunScoresDataManager.get(overworld);
