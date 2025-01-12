@@ -1,7 +1,10 @@
 package net.violetunderscore.netherrun.item.custom;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -30,6 +33,16 @@ public class NetherrunTotemItem extends Item {
                     if (pEntity.isInLava()) {
                         if (!(pEntity instanceof Player _player && (_player.isSpectator() || _player.isCreative()) && !_player.isDeadOrDying())) {
                             if (pStack.getOrCreateTag().getBoolean("netherrun.ready")) {
+                                if (pEntity instanceof LivingEntity livingEntity) {
+                                    MobEffectInstance effect = new MobEffectInstance(
+                                            MobEffects.FIRE_RESISTANCE,
+                                            60,
+                                            0,
+                                            true,
+                                            true
+                                    );
+                                    livingEntity.addEffect(effect);
+                                }
                                 pEntity.extinguishFire();
                                 for (int yValue = 1; yValue <= 10; yValue += 1) {
                                     BlockState state = pLevel.getBlockState(BlockPos.containing(

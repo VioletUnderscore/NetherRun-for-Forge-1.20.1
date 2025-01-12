@@ -5,6 +5,7 @@ import net.minecraft.advancements.critereon.LocationPredicate;
 import net.minecraft.advancements.critereon.PlayerTrigger;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -478,6 +479,11 @@ public class ModEventBusEvents {
                     broadcastMessageToAllPlayers(
                             server,
                             Component.literal("")
+                                    .append(Component.literal("Type ").withStyle(ChatFormatting.WHITE))
+                                    .append(Component.literal("/netherrun ready").withStyle(ChatFormatting.GREEN)
+                                            .withStyle(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/netherrun ready"))))
+                                    .append(Component.literal(" to start!").withStyle(ChatFormatting.WHITE))
+                                    .append("\n\n")
                                     .append(Component.literal("======================").withStyle(ChatFormatting.GRAY))
                     );
                 }
@@ -623,6 +629,9 @@ public class ModEventBusEvents {
             player.setGlowingTag(true);
             if (!scoresData.isRunnerInFortress()) {
                 player.heal(0.01f);
+            }
+            else {
+                player.heal(0.0025f);
             }
         }
         else {
