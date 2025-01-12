@@ -476,14 +476,20 @@ public class ModEventBusEvents {
                         }
                     }
                     scoresData.setRoundJustEnded(false);
+                    if (scoresData.isGameActive()) {
+                        broadcastMessageToAllPlayers(
+                                server,
+                                Component.literal("")
+                                        .append(Component.literal("Type ").withStyle(ChatFormatting.WHITE))
+                                        .append(Component.literal("/netherrun ready").withStyle(ChatFormatting.GREEN)
+                                                .withStyle(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/netherrun ready"))))
+                                        .append(Component.literal(" to start!").withStyle(ChatFormatting.WHITE))
+                                        .append("\n")
+                        );
+                    }
                     broadcastMessageToAllPlayers(
                             server,
                             Component.literal("")
-                                    .append(Component.literal("Type ").withStyle(ChatFormatting.WHITE))
-                                    .append(Component.literal("/netherrun ready").withStyle(ChatFormatting.GREEN)
-                                            .withStyle(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/netherrun ready"))))
-                                    .append(Component.literal(" to start!").withStyle(ChatFormatting.WHITE))
-                                    .append("\n\n")
                                     .append(Component.literal("======================").withStyle(ChatFormatting.GRAY))
                     );
                 }
