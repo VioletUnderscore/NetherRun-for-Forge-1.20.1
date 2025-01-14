@@ -85,7 +85,7 @@ public class NetherRunScoresDisplay {
                             } else try {
                                 if (player.getInventory().offhand.get(0).getTag().getLong("netherrun.ready_timeout") - player.level().getGameTime() > 0) {
                                     guiGraphics.blit(NR_CD_SLOT, x - 121, y - 23, 0, 0, 24, 24, 24, 24);
-                                    guiGraphics.drawString(Minecraft.getInstance().font, ("" + ((int) Math.ceil((Objects.requireNonNull(player.getInventory().offhand.get(0).getTag()).getLong("netherrun.ready_timeout") - player.level().getGameTime()) / 20) + 1)), x - 118, y - 32, 0xFFFFFF);
+                                    guiGraphics.drawString(Minecraft.getInstance().font, nrTimeOutToSecond(Objects.requireNonNull(player.getInventory().offhand.get(0).getTag()).getLong("netherrun.ready_timeout") - player.level().getGameTime()), x - 118, y - 32, 0xFFFFFF);
                                 }
                             } catch (NullPointerException e) {
                                 guiGraphics.drawString(Minecraft.getInstance().font, "ERR", x - 118, y - 32, 0xFF0000);
@@ -107,7 +107,7 @@ public class NetherRunScoresDisplay {
                                     } else try {
                                         if (player.getInventory().getItem(v).getTag().getLong("netherrun.ready_timeout") - player.level().getGameTime() > 0) {
                                             guiGraphics.blit(NR_CD_SLOT, x - 92 + (v * 20), y - 23, 0, 0, 24, 24, 24, 24);
-                                            guiGraphics.drawString(Minecraft.getInstance().font, ("" + ((int) Math.ceil((Objects.requireNonNull(player.getInventory().getItem(v).getTag()).getLong("netherrun.ready_timeout") - player.level().getGameTime()) / 20) + 1)), x - 89 + (v * 20), y - 32, 0xFFFFFF);
+                                            guiGraphics.drawString(Minecraft.getInstance().font, nrTimeOutToSecond(Objects.requireNonNull(player.getInventory().getItem(v).getTag()).getLong("netherrun.ready_timeout") - player.level().getGameTime()), x - 89 + (v * 20), y - 32, 0xFFFFFF);
                                         }
                                     } catch (NullPointerException e) {
                                         guiGraphics.drawString(Minecraft.getInstance().font, "ERR", x - 89 + (v * 20), y - 32, 0xFF0000);
@@ -127,8 +127,8 @@ public class NetherRunScoresDisplay {
                         } else try {
                             if (player.getInventory().getItem(slot).getTag().getLong("netherrun.ready_timeout") - player.level().getGameTime() > 0) {
                                 guiGraphics.blit(NR_CD_SLOT_SELECT, x - 92 + (slot * 20), y - 23, 0, 0, 24, 24, 24, 24);
-                                guiGraphics.drawString(Minecraft.getInstance().font, ("" + ((int) Math.ceil((Objects.requireNonNull(player.getInventory().getItem(slot).getTag()).getLong("netherrun.ready_timeout") - player.level().getGameTime()) / 20) + 1)), x - 89 + (slot * 20), y - 32, 0xFFFFFF);
-                                guiGraphics.drawString(Minecraft.getInstance().font, ("" + ((int) Math.ceil((Objects.requireNonNull(player.getInventory().getItem(slot).getTag()).getLong("netherrun.ready_timeout") - player.level().getGameTime()) / 20) + 1)), width / 2, height / 2 + 12, 0xFFFFFF);
+                                guiGraphics.drawString(Minecraft.getInstance().font, nrTimeOutToSecond(Objects.requireNonNull(player.getInventory().getItem(slot).getTag()).getLong("netherrun.ready_timeout") - player.level().getGameTime()), x - 89 + (slot * 20), y - 32, 0xFFFFFF);
+                                guiGraphics.drawCenteredString(Minecraft.getInstance().font, nrTimeOutToSecond(Objects.requireNonNull(player.getInventory().getItem(slot).getTag()).getLong("netherrun.ready_timeout") - player.level().getGameTime()), width / 2, height / 2 + 12, 0xFFFFFF);
                             }
                         } catch (NullPointerException e) {
                             guiGraphics.drawString(Minecraft.getInstance().font, "ERR", x - 89 + (slot * 20), y - 32, 0xFF0000);
@@ -233,5 +233,13 @@ public class NetherRunScoresDisplay {
         else {
             return ((int)(Math.ceil(precent * cd)) + "s");
         }
+    }
+
+    // Objects.requireNonNull(player.getInventory().offhand.get(0).getTag()).getLong("netherrun.ready_timeout") - player.level().getGameTime()
+    public static String nrTimeOutToSecond (long timeout) {
+        if (timeout < 200) {
+            return (((int) Math.ceil((timeout) / 20) + 1) + "s");
+        }
+        return ((((int) Math.ceil((timeout) / 2) + 1) / 10) + "s");
     }
 }

@@ -530,6 +530,12 @@ public class ModEventBusEvents {
                                 pBlockToPlace = Blocks.AIR.defaultBlockState();
                             }
                             getHunter(scoresData, server).setGameMode(GameType.SPECTATOR);
+                            try {
+                                ServerLevel runnerLevel = getRunner(scoresData, server).getServer().getLevel(getRunner(scoresData, server).serverLevel().dimension());
+                                getHunter(scoresData, server).changeDimension(runnerLevel);
+                            } catch (NullPointerException e) {
+                                LOGGER.error("Error 1: " + e.getMessage());
+                            }
                             getHunter(scoresData, server).teleportTo(
                                     scoresData.getSpawnX(),
                                     scoresData.getSpawnY(),
@@ -543,6 +549,12 @@ public class ModEventBusEvents {
                             //SPAWN HUNTER
                             getHunter(scoresData, server).setGameMode(GameType.SURVIVAL);
                             getHunter(scoresData, server).setHealth(20);
+                            try {
+                                ServerLevel runnerLevel = getRunner(scoresData, server).getServer().getLevel(getRunner(scoresData, server).serverLevel().dimension());
+                                getHunter(scoresData, server).changeDimension(runnerLevel);
+                            } catch (NullPointerException e) {
+                                LOGGER.error("Error 2: " + e.getMessage());
+                            }
                             getHunter(scoresData, server).teleportTo(
                                     scoresData.getSpawnX(),
                                     scoresData.getSpawnY(),
