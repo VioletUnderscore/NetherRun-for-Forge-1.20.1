@@ -1,6 +1,10 @@
 package net.violetunderscore.netherrun.block.custom;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -71,24 +75,17 @@ public class GoUpBlock extends BaseEntityBlock {
         pEntity.fallDistance = 0;
         if (!pEntity.isShiftKeyDown()) {
             pEntity.setDeltaMovement(new Vec3((pEntity.getDeltaMovement().x()), Math.max(pEntity.getDeltaMovement().y, 0.6), (pEntity.getDeltaMovement().z())));
-        }
-        else {
+        } else {
             pEntity.setDeltaMovement(new Vec3((pEntity.getDeltaMovement().x()), Math.max(pEntity.getDeltaMovement().y, -0.2), (pEntity.getDeltaMovement().z())));
         }
-//        if (pEntity instanceof Player) {
-//            Player pPlayer = (Player) pEntity;
-//            if (pState.getValue(PLAYER_PLACED)) {
-//                pPlayer.getCooldowns().addCooldown(ModBlocks.GO_UP.get().asItem(), 15);
-//                ItemStack pStack = new ItemStack(ModBlocks.GO_UP.get().asItem(), 1);
-//                NetworkHandler.sendToServer(new ItemCooldownPacket(15, pStack, pPlayer.getUUID()));
-//            }
-//        }
     }
 
-//    @Override
-//    public void onPlace(BlockState pState, Level pLevel, BlockPos pPos, BlockState pOldState, boolean pMovedByPiston) {
-//
-//    }
+    @Override
+    public void onPlace(BlockState pState, Level pLevel, BlockPos pPos, BlockState pOldState, boolean pMovedByPiston) {
+        if (!pLevel.isClientSide) {
+            SoundEvent soundEvent = SoundEvent.createVariableRangeEvent(new ResourceLocation("minecraft:item.firecharge.use"));
 
-    //PARTICLE CODE THAT DIDN'T WORK, TO BE RE-USED LATER
+            pLevel.playSound(null, pPos, soundEvent, SoundSource.BLOCKS, 0.5f, 2);
+        }
+    }
 }

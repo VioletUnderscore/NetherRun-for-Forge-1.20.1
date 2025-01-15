@@ -233,6 +233,8 @@ public class NetherRunCommands {
                             .append("\n\n")
                             .append(Component.literal("Remember to set up your kit!").withStyle(ChatFormatting.WHITE))
                             .append("\n")
+                            .append(Component.literal("Make sure you're in the same dimension!").withStyle(ChatFormatting.RED, ChatFormatting.UNDERLINE, ChatFormatting.BOLD))
+                            .append("\n")
             );
             if (ModList.get().isLoaded("amplifiednether")) {
                 broadcastMessageToAllPlayers(

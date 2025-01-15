@@ -153,7 +153,7 @@ public class ModEventBusEvents {
                                     inFortress = yungFortressPredicate.matches(serverLevel, event.player.blockPosition().getX(), event.player.blockPosition().getY(), event.player.blockPosition().getZ());
                                 }
 
-                                scoresData.setRunnerInFortress(inFortress);
+                                scoresData.setRunnerInFortress(inFortress && scoresData.isRoundActive());
                             }
                             supplyPlayer(true, event.player, scoresData);
                             try {
@@ -223,7 +223,6 @@ public class ModEventBusEvents {
                                         broadcastMessageToAllPlayers(event.player.getServer(), Component.literal("They are now being teleported...").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
                                     }
                                     NetworkHandler.sendTargeted(new PVarSTCPacket(kit.getCanWarp(), kit.isWarping(), kit.getWarpTime()), (ServerPlayer) event.player);
-                                    LOGGER.info("Can Warp: " + kit.getCanWarp() + ", Button Down: " + kit.getKeyDown() + ", Get Warp Time: " + kit.getWarpTime());
                                 });
                             } catch (NullPointerException e) {
                                 LOGGER.error("Failed to check hunter warp status");
@@ -247,7 +246,7 @@ public class ModEventBusEvents {
                                     inFortress = yungFortressPredicate.matches(serverLevel, event.player.blockPosition().getX(), event.player.blockPosition().getY(), event.player.blockPosition().getZ());
                                 }
 
-                                scoresData.setRunnerInFortress(inFortress);
+                                scoresData.setRunnerInFortress(inFortress && scoresData.isRoundActive());
                             }
                             supplyPlayer(true, event.player, scoresData);
                             try {
@@ -530,12 +529,7 @@ public class ModEventBusEvents {
                                 pBlockToPlace = Blocks.AIR.defaultBlockState();
                             }
                             getHunter(scoresData, server).setGameMode(GameType.SPECTATOR);
-                            try {
-                                ServerLevel runnerLevel = getRunner(scoresData, server).getServer().getLevel(getRunner(scoresData, server).serverLevel().dimension());
-                                getHunter(scoresData, server).changeDimension(runnerLevel);
-                            } catch (NullPointerException e) {
-                                LOGGER.error("Error 1: " + e.getMessage());
-                            }
+                            //send hunter to runner dimension here
                             getHunter(scoresData, server).teleportTo(
                                     scoresData.getSpawnX(),
                                     scoresData.getSpawnY(),
@@ -549,12 +543,7 @@ public class ModEventBusEvents {
                             //SPAWN HUNTER
                             getHunter(scoresData, server).setGameMode(GameType.SURVIVAL);
                             getHunter(scoresData, server).setHealth(20);
-                            try {
-                                ServerLevel runnerLevel = getRunner(scoresData, server).getServer().getLevel(getRunner(scoresData, server).serverLevel().dimension());
-                                getHunter(scoresData, server).changeDimension(runnerLevel);
-                            } catch (NullPointerException e) {
-                                LOGGER.error("Error 2: " + e.getMessage());
-                            }
+                            //send hunter to runner dimension here
                             getHunter(scoresData, server).teleportTo(
                                     scoresData.getSpawnX(),
                                     scoresData.getSpawnY(),
@@ -589,7 +578,9 @@ public class ModEventBusEvents {
                             LOGGER.error("Global Variable \"whosTurn\" is neither 1 nor 2 - violetunderscore.netherrun.client.ModEventBusEvents/onWorldTick:216 (or somewhere around there)");
                         }
                 }
-                else if (scoresData.isTeam1Ready() && scoresData.isTeam2Ready()) {
+                else {
+                    scoresData.setRunnerInFortress(false);
+                    if (scoresData.isTeam1Ready() && scoresData.isTeam2Ready()) {
                     scoresData.setRoundActive(true);
                     scoresData.setSpawnTimerR(10 * 40);
                     teleAll(server, new Vec3(new Random().nextInt(20000) - 10000, 100, new Random().nextInt(20000) - 10000)); /* not working??? */
@@ -597,7 +588,10 @@ public class ModEventBusEvents {
                     //mark hunter as hunter and runner as runner
                     scoresData.setTeam1Ready(false);
                     scoresData.setTeam2Ready(false);
+                    }
                 }
+            } else {
+                scoresData.setRunnerInFortress(false);
             }
         }
     }

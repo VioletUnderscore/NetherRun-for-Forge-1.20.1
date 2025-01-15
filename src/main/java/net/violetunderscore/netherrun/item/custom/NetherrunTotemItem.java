@@ -1,6 +1,9 @@
 package net.violetunderscore.netherrun.item.custom;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
@@ -24,8 +27,12 @@ public class NetherrunTotemItem extends Item {
     public void inventoryTick(ItemStack pStack, Level pLevel, Entity pEntity, int pSlotId, boolean pIsSelected) {
 
         if (pStack.getOrCreateTag().getLong("netherrun.ready_timeout") <= pLevel.getGameTime()) {
-            pStack.getOrCreateTag().putBoolean("netherrun.ready", true);
-            pStack.getOrCreateTag().putInt("CustomModelData", 0);
+            if (!pStack.getOrCreateTag().getBoolean("netherrun.ready")) {
+                SoundEvent soundEvent = SoundEvent.createVariableRangeEvent(new ResourceLocation("minecraft:block.respawn_anchor.charge"));
+                pLevel.playSound(null, pEntity.blockPosition(), soundEvent, SoundSource.PLAYERS, 1, 1);
+                pStack.getOrCreateTag().putBoolean("netherrun.ready", true);
+                pStack.getOrCreateTag().putInt("CustomModelData", 0);
+            }
         }
         if (pIsSelected || (pEntity instanceof Player _player && _player.getInventory().offhand.get(0) == pStack)) {
             if (!pLevel.isClientSide()) {
@@ -80,6 +87,8 @@ public class NetherrunTotemItem extends Item {
                                 pStack.getOrCreateTag().putBoolean("netherrun.ready", false);
                                 pStack.getOrCreateTag().putInt("CustomModelData", 1);
                                 pStack.getOrCreateTag().putLong("netherrun.ready_timeout", pLevel.getGameTime() + 20 * 20);
+                                SoundEvent soundEvent = SoundEvent.createVariableRangeEvent(new ResourceLocation("minecraft:block.respawn_anchor.deplete"));
+                                pLevel.playSound(null, pEntity.blockPosition(), soundEvent, SoundSource.PLAYERS, 2, 1);
                             }
                         }
 

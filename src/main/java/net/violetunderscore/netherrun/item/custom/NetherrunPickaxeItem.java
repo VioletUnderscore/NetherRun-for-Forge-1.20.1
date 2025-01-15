@@ -1,5 +1,8 @@
 package net.violetunderscore.netherrun.item.custom;
 
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
@@ -32,6 +35,8 @@ public class NetherrunPickaxeItem extends PickaxeItem {
 
             pEnchantments.remove(Enchantments.BLOCK_EFFICIENCY);
             EnchantmentHelper.setEnchantments(pEnchantments, pStack);
+            SoundEvent soundEvent = SoundEvent.createVariableRangeEvent(new ResourceLocation("minecraft:block.conduit.deactivate"));
+            pLevel.playSound(null, pEntity.blockPosition(), soundEvent, SoundSource.PLAYERS, 1, 0.5f);
         }
         else if (pStack.getOrCreateTag().getLong("netherrun.timeout") > pLevel.getGameTime()
                 && pStack.getEnchantmentLevel(Enchantments.BLOCK_EFFICIENCY) != 10)
@@ -53,6 +58,8 @@ public class NetherrunPickaxeItem extends PickaxeItem {
             pPlayer.getMainHandItem().getTag().putInt("CustomModelData", 1);
             pPlayer.getMainHandItem().getTag().putLong("netherrun.timeout", pLevel.getGameTime() + 100);
             pPlayer.getMainHandItem().getTag().putLong("netherrun.ready_timeout", pLevel.getGameTime() + 30 * 20);
+            SoundEvent soundEvent = SoundEvent.createVariableRangeEvent(new ResourceLocation("minecraft:item.trident.riptide_3"));
+            pLevel.playSound(null, pPlayer.blockPosition(), soundEvent, SoundSource.PLAYERS, 1, 0.7f);
         }
         return super.use(pLevel, pPlayer, pUsedHand);
     }
