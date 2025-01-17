@@ -45,6 +45,7 @@ public class NetherRunScoresData extends SavedData {
     private int color2;
     private int netherRoof;
     private int netherFloor;
+    private int fortressTime;
     private boolean gameActive;
     private boolean roundActive;
     private boolean team1Ready;
@@ -71,6 +72,7 @@ public class NetherRunScoresData extends SavedData {
     private static final String COLOR_2_KEY = "color2";
     private static final String NETHER_ROOF_KEY = "netherRoof";
     private static final String NETHER_FLOOR_KEY = "netherFloor";
+    private static final String FORTRESS_TIME_KEY = "fortressTime";
     private static final String GAME_ACTIVE_KEY = "gameActive";
     private static final String ROUND_ACTIVE_KEY = "roundActive";
     private static final String TEAM1_READY_KEY = "team1Ready";
@@ -97,6 +99,7 @@ public class NetherRunScoresData extends SavedData {
         this.color2 = 5;
         this.netherRoof = 0;
         this.netherFloor = 128;
+        this.fortressTime = 0;
         this.gameActive = false;
         this.roundActive = false;
         this.team1Ready = false;
@@ -125,6 +128,7 @@ public class NetherRunScoresData extends SavedData {
     public int getColor2() { return color2; } /*  -  -  -  -  -  -  -  */ public void setColor2(int color2) { this.color2 = color2; setDirty(); }
     public int getNetherRoof() { return netherRoof; } /*  -  -  -  -  -  -  -  */ public void setNetherRoof(int netherRoof) { this.netherRoof = netherRoof; setDirty(); }
     public int getNetherFloor() { return netherFloor; } /*  -  -  -  -  -  -  -  */ public void setNetherFloor(int netherFloor) { this.netherFloor = netherFloor; setDirty(); }
+    public int getFortressTime() { return fortressTime; } /*  -  -  -  -  -  -  -  */ public void setFortressTime(int fortressTime) { this.fortressTime = fortressTime; setDirty(); }
 
     public boolean isGameActive() { return gameActive; } /*  -  -  -  -  -  -  -  */ public void setGameActive(boolean gameActive) { this.gameActive = gameActive; setDirty(); }
     public boolean isRoundActive() { return roundActive; } /*  -  -  -  -  -  -  -  */ public void setRoundActive(boolean roundActive) { this.roundActive = roundActive; setDirty(); }
@@ -164,6 +168,7 @@ public class NetherRunScoresData extends SavedData {
         tag.putInt(COLOR_2_KEY, color2);
         tag.putInt(NETHER_ROOF_KEY, netherRoof);
         tag.putInt(NETHER_FLOOR_KEY, netherFloor);
+        tag.putInt(FORTRESS_TIME_KEY, fortressTime);
         tag.putBoolean(GAME_ACTIVE_KEY, gameActive);
         tag.putBoolean(ROUND_ACTIVE_KEY, roundActive);
         tag.putBoolean(TEAM1_READY_KEY, team1Ready);
@@ -193,6 +198,7 @@ public class NetherRunScoresData extends SavedData {
         data.color2 = tag.getInt(COLOR_2_KEY);
         data.netherRoof = tag.getInt(NETHER_ROOF_KEY);
         data.netherFloor = tag.getInt(NETHER_FLOOR_KEY);
+        data.fortressTime = tag.getInt(FORTRESS_TIME_KEY);
         data.gameActive = tag.getBoolean(GAME_ACTIVE_KEY);
         data.roundActive = tag.getBoolean(ROUND_ACTIVE_KEY);
         data.team1Ready = tag.getBoolean(TEAM1_READY_KEY);

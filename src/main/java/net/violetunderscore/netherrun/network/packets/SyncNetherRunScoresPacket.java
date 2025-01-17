@@ -22,6 +22,7 @@ public class SyncNetherRunScoresPacket {
     private final int color2;
     private final int netherRoof;
     private final int netherFloor;
+    private final int fortressTime;
     private final boolean gameActive;
     private final boolean roundActive;
     private final boolean team1Ready;
@@ -36,6 +37,7 @@ public class SyncNetherRunScoresPacket {
                                      int spawnTimerR, int spawnTimerH, int round, int whosTurn,
                                      int spawnX, int spawnY, int spawnZ,
                                      int color1, int color2, int netherRoof, int netherFloor,
+                                     int fortressTime,
                                      boolean gameActive, boolean roundActive,
                                      boolean team1Ready, boolean team2Ready, boolean roundJustEnded,
                                      boolean gamePaused, boolean runnerInFortress,
@@ -55,6 +57,7 @@ public class SyncNetherRunScoresPacket {
         this.color2 = color2;
         this.netherRoof = netherRoof;
         this.netherFloor = netherFloor;
+        this.fortressTime = fortressTime;
         this.gameActive = gameActive;
         this.roundActive = roundActive;
         this.team1Ready = team1Ready;
@@ -82,6 +85,7 @@ public class SyncNetherRunScoresPacket {
         this.color2 = buf.readInt();
         this.netherRoof = buf.readInt();
         this.netherFloor = buf.readInt();
+        this.fortressTime = buf.readInt();
         this.gameActive = buf.readBoolean();
         this.roundActive = buf.readBoolean();
         this.team1Ready = buf.readBoolean();
@@ -109,6 +113,7 @@ public class SyncNetherRunScoresPacket {
         buf.writeInt(color2);
         buf.writeInt(netherRoof);
         buf.writeInt(netherFloor);
+        buf.writeInt(fortressTime);
         buf.writeBoolean(gameActive);
         buf.writeBoolean(roundActive);
         buf.writeBoolean(team1Ready);
@@ -137,6 +142,7 @@ public class SyncNetherRunScoresPacket {
             NetherRunGlobalClientData.setColor2(color2);
             NetherRunGlobalClientData.setNetherRoof(netherRoof);
             NetherRunGlobalClientData.setNetherFloor(netherFloor);
+            NetherRunGlobalClientData.setFortressTime(fortressTime);
             NetherRunGlobalClientData.setGameActive(gameActive);
             NetherRunGlobalClientData.setRoundActive(roundActive);
             NetherRunGlobalClientData.setTeam1Ready(team1Ready);

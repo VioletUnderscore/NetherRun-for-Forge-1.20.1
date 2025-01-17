@@ -65,7 +65,7 @@ public class NetherRunScoresDisplay {
             /*FortressLogic*/
             {
                 if (NetherRunGlobalClientData.isRunnerInFortress()) {
-                    guiGraphics.drawString(Minecraft.getInstance().font, "Fortress Debuff: 25% Regen", 175, 12, 0x880000);
+                    guiGraphics.drawString(Minecraft.getInstance().font, "Fortress Debuff: Timer is 50% slower", 175, 12, 0x880000);
                 }
             }
 

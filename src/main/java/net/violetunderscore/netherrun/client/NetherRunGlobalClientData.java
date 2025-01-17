@@ -19,6 +19,7 @@ public class NetherRunGlobalClientData {
     private static int color2 = 0;
     private static int netherRoof = 0;
     private static int netherFloor = 0;
+    private static int fortressTime = 0;
     private static boolean gameActive = false;
     private static boolean roundActive = false;
     private static boolean team1Ready = false;
@@ -63,17 +64,20 @@ public class NetherRunGlobalClientData {
     public static void setSpawnZ(int turn) {
         spawnZ = turn;
     }
-    public static void setColor1(int color) {  // Setter for color1
+    public static void setColor1(int color) {
         color1 = color;
     }
-    public static void setColor2(int color) {  // Setter for color2
+    public static void setColor2(int color) {
         color2 = color;
     }
-    public static void setNetherRoof(int roof) {  // Setter for netherRoof
+    public static void setNetherRoof(int roof) {
         netherRoof = roof;
     }
-    public static void setNetherFloor(int floor) {  // Setter for netherFloor
+    public static void setNetherFloor(int floor) {
         netherFloor = floor;
+    }
+    public static void setFortressTime(int v) {
+        fortressTime = v;
     }
 
     public static void setGameActive(boolean active) {
@@ -146,6 +150,9 @@ public class NetherRunGlobalClientData {
     }
     public static int getNetherFloor() {
         return netherFloor;
+    }
+    public static int getFortressTime() {
+        return fortressTime;
     }
 
     public static boolean isGameActive() {
