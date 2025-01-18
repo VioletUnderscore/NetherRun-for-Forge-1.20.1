@@ -253,25 +253,31 @@ public class ForgeEventBusEvents {
 
 
     private static float getTrueDamage(LivingAttackEvent event) {
-        float armor = event.getEntity().getArmorValue();
-        float toughness = 0;
-        for (ItemStack armorPiece : event.getEntity().getArmorSlots()) {
-            if (armorPiece.getItem() instanceof ArmorItem armorItem) {
-                toughness += armorItem.getToughness();
+        if (!event.getSource().getMsgId().equals("fall")) {
+            float armor = event.getEntity().getArmorValue();
+            float toughness = 0;
+            for (ItemStack armorPiece : event.getEntity().getArmorSlots()) {
+                if (armorPiece.getItem() instanceof ArmorItem armorItem) {
+                    toughness += armorItem.getToughness();
+                }
             }
+            float trueDamage = event.getAmount() * (1 - (Math.min(20, Math.max((armor / 5), armor - (armor / (2 + (toughness / 4))))) / 25));
+            return trueDamage;
         }
-        float trueDamage = event.getAmount() * (1 - (Math.min(20, Math.max((armor / 5), armor - (armor / (2 + (toughness / 4))))) / 25));
-        return trueDamage;
+        return event.getAmount();
     }
     private static float getTrueDamage(LivingHurtEvent event) {
-        float armor = event.getEntity().getArmorValue();
-        float toughness = 0;
-        for (ItemStack armorPiece : event.getEntity().getArmorSlots()) {
-            if (armorPiece.getItem() instanceof ArmorItem armorItem) {
-                toughness += armorItem.getToughness();
+        if (!event.getSource().getMsgId().equals("fall")) {
+            float armor = event.getEntity().getArmorValue();
+            float toughness = 0;
+            for (ItemStack armorPiece : event.getEntity().getArmorSlots()) {
+                if (armorPiece.getItem() instanceof ArmorItem armorItem) {
+                    toughness += armorItem.getToughness();
+                }
             }
+            float trueDamage = event.getAmount() * (1 - (Math.min(20, Math.max((armor / 5), armor - (armor / (2 + (toughness / 4))))) / 25));
+            return trueDamage;
         }
-        float trueDamage = event.getAmount() * (1 - (Math.min(20, Math.max((armor / 5), armor - (armor / (2 + (toughness / 4))))) / 25));
-        return trueDamage;
+        return event.getAmount();
     }
 }
